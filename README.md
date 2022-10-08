@@ -1,2 +1,2 @@
-# core-api-server
-The core api server is based on best-practice standards, implementing the PSR-7, PSR-11 and PSR-15.
+# peroks/api-server
+### An ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15 best-practice standards.

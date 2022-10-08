@@ -1,0 +1,29 @@
+{
+	"name": "peroks/api-server",
+	"description": "An ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15 best-practice standards.",
+	"type": "library",
+	"minimum-stability": "stable",
+	"version": "0.1.0",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Per Egil Roksvaag",
+			"homepage": "https://github.com/peroks"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Peroks\\ApiServer\\": "src/"
+		}
+	},
+	"require": {
+		"php": "^7.3 || ^8.0",
+		"peroks/model": "^0.8.3",
+		"psr/http-server-middleware": "^1.0",
+		"psr/http-server-handler": "^1.0",
+		"psr/container": "^2.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9"
+	}
+}
