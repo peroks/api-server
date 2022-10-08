@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * best-practice standards.
  *
  * The api server is not a stand-along application, but a host for your own or
- * third-party request handlers and middleware implementing PSR-15 interfaces.
+ * third-party request handlers and middleware based on PSR-15.
  *
  * @property-read Settings $settings The server settings.
  * @property-read Dependencies $dependencies The PSR-11 container for dependency injection.
