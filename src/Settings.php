@@ -38,9 +38,9 @@ class Settings extends Model {
 	 */
 	public static function read( string $file, array $data = [] ): self {
 		if ( $file && is_readable( $file ) ) {
-			$content    = file_get_contents( $file );
-			$connection = json_decode( $content, true, 64, JSON_THROW_ON_ERROR );
-			$data       = array_replace( $connection, $data );
+			$content = file_get_contents( $file );
+			$content = json_decode( $content, true, 64, JSON_THROW_ON_ERROR );
+			$data    = array_replace( $content, $data );
 		}
 
 		return static::create( $data )->validate( true );
