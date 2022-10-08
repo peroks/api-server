@@ -58,7 +58,8 @@ class Server implements RequestHandlerInterface {
 
 				// Create the server default settings.
 				case 'settings':
-					$this->properties[ $name ] = Settings::read( 'api-server.json' );
+					$settings                  = Settings::read( 'api-server.json' );
+					$this->properties[ $name ] = $settings->validate( true );
 					break;
 
 				// Create the PSR-11 container for dependency injection.
