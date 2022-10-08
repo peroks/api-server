@@ -1,7 +1,6 @@
 <?php namespace Peroks\ApiServer;
 
 use Peroks\ApiServer\Models\Endpoint;
-use Peroks\ApiServer\Models\Method;
 use Peroks\ApiServer\Models\MiddlewareInfo;
 
 /**
@@ -70,7 +69,7 @@ class Registry {
 	 *
 	 * @return Endpoint|null The endpoint removed from the registry or null.
 	 */
-	public function removeEndpoint( string $route, string $method = Method::GET ): ?Endpoint {
+	public function removeEndpoint( string $route, string $method = Endpoint::GET ): ?Endpoint {
 		$endpoint = $this->getEndpoint( $route, $method );
 		unset( $this->endpoints[ $route ][ $method ] );
 		return $endpoint;
@@ -84,7 +83,7 @@ class Registry {
 	 *
 	 * @return bool True if a matching endpoint is registered, null otherwise.
 	 */
-	public function hasEndpoint( string $route, string $method = Method::GET ): bool {
+	public function hasEndpoint( string $route, string $method = Endpoint::GET ): bool {
 		return isset( $this->endpoints[ $route ][ $method ] );
 	}
 
@@ -96,7 +95,7 @@ class Registry {
 	 *
 	 * @return Endpoint|null The matching endpoint in the registry or null.
 	 */
-	public function getEndpoint( string $route, string $method = Method::GET ): ?Endpoint {
+	public function getEndpoint( string $route, string $method = Endpoint::GET ): ?Endpoint {
 		return $this->endpoints[ $route ][ $method ] ?? null;
 	}
 

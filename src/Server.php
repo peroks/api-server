@@ -1,8 +1,6 @@
 <?php namespace Peroks\ApiServer;
 
 use Peroks\ApiServer\Exceptions\ApiServerException;
-use Peroks\ApiServer\Models\Settings;
-use Peroks\Model\ModelException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -14,7 +12,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * best-practice standards.
  *
  * The api server is not a stand-along application, but a host for your own or
- * third-party request handlers and middleware based on PSR-15.
+ * third-party request handlers and middleware based on PSR-15. You can also
+ * extend this class to create a custom api application.
  *
  * @property-read Settings $settings The server settings.
  * @property-read Dependencies $dependencies The PSR-11 container for dependency injection.
@@ -36,8 +35,6 @@ class Server implements RequestHandlerInterface {
 	 * Constructor.
 	 *
 	 * @param Settings|null $settings The server settings.
-	 *
-	 * @throws ModelException
 	 */
 	public function __construct( Settings $settings = null ) {
 		if ( $settings ) {

@@ -1,7 +1,6 @@
 <?php namespace Peroks\ApiServer;
 
 use Peroks\ApiServer\Exceptions\NotFoundException;
-use Peroks\ApiServer\Models\Settings;
 use Psr\Container\ContainerInterface;
 
 /**

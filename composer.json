@@ -3,7 +3,7 @@
 	"description": "An ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15 best-practice standards.",
 	"type": "library",
 	"minimum-stability": "stable",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "MIT",
 	"authors": [
 		{

@@ -19,6 +19,17 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class Endpoint extends Model {
 
+	// Supported http methods.
+	const GET     = 'GET';
+	const HEAD    = 'HEAD';
+	const POST    = 'POST';
+	const PUT     = 'PUT';
+	const PATCH   = 'PATCH';
+	const DELETE  = 'DELETE';
+	const CONNECT = 'CONNECT';
+	const OPTIONS = 'OPTIONS';
+	const TRACE   = 'TRACE';
+
 	/**
 	 * @var array An array of model properties.
 	 */
@@ -50,13 +61,17 @@ class Endpoint extends Model {
 			'desc'     => 'The endpoint method',
 			'type'     => PropertyType::STRING,
 			'required' => true,
-			'default'  => Method::GET,
+			'default'  => self::GET,
 			'enum'     => [
-				Method::GET,
-				Method::POST,
-				Method::PATCH,
-				Method::PUT,
-				Method::DELETE,
+				self::GET,
+				self::HEAD,
+				self::POST,
+				self::PUT,
+				self::PATCH,
+				self::DELETE,
+				self::CONNECT,
+				self::OPTIONS,
+				self::TRACE,
 			],
 		],
 		'handler' => [
