@@ -31,6 +31,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 class Server implements RequestHandlerInterface {
 
 	/**
+	 * The api server version.
+	 */
+	const VERSION = '0.1.1';
+
+	/**
 	 * @var object[] The server properties.
 	 */
 	protected array $properties = [];

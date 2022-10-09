@@ -157,7 +157,7 @@ class Registry {
 	 * @return bool True if a matching middleware is registered, null otherwise.
 	 */
 	public function hasMiddleware( string $name ): bool {
-		return isset( $this->middlewares[ $name ] );
+		return isset( $this->middleware[ $name ] );
 	}
 
 	/**
@@ -168,7 +168,7 @@ class Registry {
 	 * @return Middleware|null The matching middleware in the registry or null.
 	 */
 	public function getMiddleware( string $name ): ?Middleware {
-		return $this->middlewares[ $name ] ?? null;
+		return $this->middleware[ $name ] ?? null;
 	}
 
 	/**
