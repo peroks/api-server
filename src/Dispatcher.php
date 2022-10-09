@@ -107,7 +107,7 @@ class Dispatcher implements RequestHandlerInterface {
 	 */
 	protected function getStack( RequestHandlerInterface $handler ): Stack {
 		$entries    = $this->registry->getMiddlewareEntries();
-		$middleware = array_column( $entries, 'middleware' );
+		$middleware = array_column( $entries, 'instance' );
 
 		return new Stack( $middleware, $handler );
 	}

@@ -1,7 +1,7 @@
 <?php namespace Peroks\ApiServer;
 
 use Peroks\ApiServer\Models\Endpoint;
-use Peroks\ApiServer\Models\MiddlewareInfo;
+use Peroks\ApiServer\Models\Middleware;
 
 /**
  * A container for registered request handlers and middleware.
@@ -23,7 +23,7 @@ class Registry {
 	protected array $endpoints = [];
 
 	/**
-	 * @var MiddlewareInfo[] An array of registered entries for PSR-15 middleware.
+	 * @var Middleware[] An array of registered entries for PSR-15 middleware.
 	 */
 	protected array $middleware = [];
 
@@ -118,11 +118,11 @@ class Registry {
 	 * This method returns false if a middleware entry with the same name is
 	 * already registered.
 	 *
-	 * @param MiddlewareInfo $middleware The middleware entry to add to the registry.
+	 * @param Middleware $middleware The middleware entry to add to the registry.
 	 *
 	 * @return bool True if the middleware was added, false otherwise.
 	 */
-	public function addMiddleware( MiddlewareInfo $middleware ): bool {
+	public function addMiddleware( Middleware $middleware ): bool {
 		$middleware->validate( true );
 
 		if ( $this->hasMiddleware( $middleware->name ) ) {
@@ -141,9 +141,9 @@ class Registry {
 	 *
 	 * @param string $name The middleware name.
 	 *
-	 * @return MiddlewareInfo|null The middleware removed from the registry or null.
+	 * @return Middleware|null The middleware removed from the registry or null.
 	 */
-	public function removeMiddleware( string $name ): ?MiddlewareInfo {
+	public function removeMiddleware( string $name ): ?Middleware {
 		$middleware = $this->getMiddleware( $name );
 		unset( $this->middleware[ $name ] );
 		return $middleware;
@@ -165,16 +165,16 @@ class Registry {
 	 *
 	 * @param string $name The middleware name.
 	 *
-	 * @return MiddlewareInfo|null The matching middleware in the registry or null.
+	 * @return Middleware|null The matching middleware in the registry or null.
 	 */
-	public function getMiddleware( string $name ): ?MiddlewareInfo {
+	public function getMiddleware( string $name ): ?Middleware {
 		return $this->middlewares[ $name ] ?? null;
 	}
 
 	/**
 	 * Gets all registered middleware instances.
 	 *
-	 * @return MiddlewareInfo[] An array of registered middleware entries.
+	 * @return Middleware[] An array of registered middleware entries.
 	 */
 	public function getMiddlewareEntries(): array {
 		return $this->middleware;
@@ -183,10 +183,10 @@ class Registry {
 	/**
 	 * Sorts middleware by priority.
 	 *
-	 * @param MiddlewareInfo $a A middleware entry to sort.
-	 * @param MiddlewareInfo $b Another middleware entry to sort.
+	 * @param Middleware $a A middleware entry to sort.
+	 * @param Middleware $b Another middleware entry to sort.
 	 */
-	protected static function sortMiddleware( MiddlewareInfo $a, MiddlewareInfo $b ): int {
+	protected static function sortMiddleware( Middleware $a, Middleware $b ): int {
 		return $a->priority <=> $b->priority;
 	}
 }

@@ -5,38 +5,38 @@ use Peroks\Model\PropertyType;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
- * PSR-15 middleware info.
+ * A PSR-15 middleware entry.
  *
  * @property string $name The middleware name.
  * @property string $desc The middleware description.
  * @property integer $priority The middleware priority.
- * @property MiddlewareInterface $middleware A PSR-15 middleware instance.
+ * @property MiddlewareInterface $instance A PSR-15 middleware instance.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
  */
-class MiddlewareInfo extends Model {
+class Middleware extends Model {
 
 	/**
 	 * @var array An array of model properties.
 	 */
 	protected static array $properties = [
-		'name'       => [
+		'name'     => [
 			'id'       => 'name',
 			'name'     => 'Middleware name',
 			'desc'     => 'The middleware name',
 			'type'     => PropertyType::STRING,
 			'required' => true,
 		],
-		'desc'       => [
+		'desc'     => [
 			'id'       => 'desc',
 			'name'     => 'Middleware description',
 			'desc'     => 'The middleware description',
 			'type'     => PropertyType::STRING,
 			'required' => false,
 		],
-		'priority'   => [
+		'priority' => [
 			'id'       => 'priority',
 			'name'     => 'Middleware priority',
 			'desc'     => 'The middleware priority',
@@ -46,8 +46,8 @@ class MiddlewareInfo extends Model {
 			'min'      => 1,
 			'max'      => 99,
 		],
-		'middleware' => [
-			'id'       => 'middleware',
+		'instance' => [
+			'id'       => 'instance',
 			'name'     => 'Middleware instance',
 			'desc'     => 'A PSR-15 middleware instance',
 			'type'     => PropertyType::OBJECT,
