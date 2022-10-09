@@ -6,14 +6,18 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * The core api server class.
+ * The api server main class.
  *
- * An ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15
+ * It is an ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15
  * best-practice standards.
  *
- * The api server is not a stand-along application, but a host for your own or
- * third-party request handlers and middleware based on PSR-15. You can also
- * extend this class to create a custom api application.
+ * The api server is not a stand-alone application, but a host for external
+ * PSR-15 request handlers and middleware. You can use this class as a module
+ * in your own application or extend it to create custom api servers.
+ *
+ * The api server does not handle any requests by itself, it just dispatches
+ * them to the registered request handlers and middleware and returns their
+ * responses.
  *
  * @property-read Settings $settings The server settings.
  * @property-read Dependencies $dependencies The PSR-11 container for dependency injection.
