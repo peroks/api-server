@@ -4,7 +4,6 @@ use Peroks\ApiServer\Exceptions\ApiServerException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Peroks\ApiServer\Models\Endpoint;
 
 /**
  * This class dispatches requests to registered middleware and request handlers.

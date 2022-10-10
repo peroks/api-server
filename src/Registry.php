@@ -1,8 +1,5 @@
 <?php namespace Peroks\ApiServer;
 
-use Peroks\ApiServer\Models\Endpoint;
-use Peroks\ApiServer\Models\Middleware;
-
 /**
  * A container for registered request handlers and middleware.
  *
