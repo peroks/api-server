@@ -1,4 +1,4 @@
-<?php namespace Peroks\ApiServer\Exceptions;
+<?php namespace Peroks\ApiServer;
 
 use Exception;
 
@@ -8,5 +8,5 @@ use Exception;
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  */
-class ApiServerException extends Exception {
+class ServerException extends Exception {
 }

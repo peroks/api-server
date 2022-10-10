@@ -1,6 +1,5 @@
 <?php namespace Peroks\ApiServer;
 
-use Peroks\ApiServer\Exceptions\ApiServerException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -56,7 +55,7 @@ class Dispatcher implements RequestHandlerInterface {
 	 * @param mixed $attributes An assoc array of attributes extracted from the request uri.
 	 *
 	 * @return Endpoint The matching endpoint.
-	 * @throws ApiServerException
+	 * @throws ServerException
 	 */
 	protected function getEndpoint( ServerRequestInterface $request, &$attributes = null ): Endpoint {
 		$endpoints  = $this->registry->getEndpoints();
@@ -79,7 +78,7 @@ class Dispatcher implements RequestHandlerInterface {
 		}
 
 		$error = 'The requested resource was not found';
-		throw new ApiServerException( $error, 404 );
+		throw new ServerException( $error, 404 );
 	}
 
 	/**

@@ -1,6 +1,5 @@
 <?php namespace Peroks\ApiServer;
 
-use Peroks\ApiServer\Exceptions\ApiServerException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -8,7 +7,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * The api server main class.
  *
- * It is an ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15
+ * It is an ultra light api server based on PSR-4, PSR-7 and PSR-15
  * best-practice standards.
  *
  * The api server is not a stand-alone application, but a host for external
@@ -19,8 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  * them to the registered request handlers and middleware and returns their
  * responses.
  *
- * @property-read Settings $settings The server settings.
- * @property-read Dependencies $dependencies The PSR-11 container for dependency injection.
  * @property-read Dispatcher $dispatcher The PSR-15 request dispatcher.
  * @property-read Registry $registry A container for registered request handlers and middleware.
  *
@@ -42,17 +39,8 @@ class Server implements RequestHandlerInterface {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param Settings|null $settings The server settings.
 	 */
-	public function __construct( Settings $settings = null ) {
-		if ( $settings ) {
-			$this->properties['settings'] = $settings->validate( true );
-		}
-
-		$this->init();
-		$this->plugins();
-	}
+	public function __construct() {}
 
 	/**
 	 * Provides protected access to server properties.
@@ -64,17 +52,6 @@ class Server implements RequestHandlerInterface {
 	public function __get( string $name ): object {
 		if ( empty( $this->properties[ $name ] ) ) {
 			switch ( $name ) {
-
-				// Create the server default settings.
-				case 'settings':
-					$settings                  = Settings::read( 'api-server.json' );
-					$this->properties[ $name ] = $settings->validate( true );
-					break;
-
-				// Create the PSR-11 container for dependency injection.
-				case 'dependencies':
-					$this->properties[ $name ] = new Dependencies( $this->settings );
-					break;
 
 				// Create the PSR-15 request dispatcher.
 				case 'dispatcher':
@@ -89,27 +66,11 @@ class Server implements RequestHandlerInterface {
 				// Throws an exception if the property name doesn't exist.
 				default:
 					$error = sprintf( 'The property %s does not exist in %s', $name, static::class );
-					throw new ApiServerException( $error, 500 );
+					throw new ServerException( $error, 500 );
 			}
 		}
 
 		return $this->properties[ $name ];
-	}
-
-	/**
-	 * Initialises the api server.
-	 */
-	protected function init() {}
-
-	/**
-	 * Loads server plugins.
-	 */
-	protected function plugins() {
-		$apiServer = $this;
-
-		foreach ( $this->dependencies->get( 'plugins' ) as $path ) {
-			is_readable( $path ) && require $path;
-		}
 	}
 
 	/**

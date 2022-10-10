@@ -1,6 +1,5 @@
 <?php namespace Peroks\ApiServer;
 
-use Peroks\ApiServer\Exceptions\ApiServerException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -71,6 +70,6 @@ class Stack implements RequestHandlerInterface {
 		}
 
 		$error = 'Middleware must implement the PSR-15 MiddlewareInterface';
-		throw new ApiServerException( $error, 500 );
+		throw new ServerException( $error, 500 );
 	}
 }
