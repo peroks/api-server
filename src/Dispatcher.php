@@ -69,7 +69,7 @@ class Dispatcher implements RequestHandlerInterface {
 
 				if ( $endpoint ) {
 					$attributes           = array_filter( $matches, 'is_string', ARRAY_FILTER_USE_KEY );
-					$attributes['_name']  = $endpoint->name;
+					$attributes['_id']    = $endpoint->id();
 					$attributes['_route'] = $endpoint->route;
 
 					return $endpoint;
