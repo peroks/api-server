@@ -67,9 +67,12 @@ class Registry {
 	 * @return Endpoint|null The endpoint removed from the registry or null.
 	 */
 	public function removeEndpoint( string $route, string $method = Endpoint::GET ): ?Endpoint {
-		$endpoint = $this->getEndpoint( $route, $method );
-		unset( $this->endpoints[ $route ][ $method ] );
-		return $endpoint;
+		if ( $this->hasEndpoint( $route, $method ) ) {
+			$endpoint = $this->getEndpoint( $route, $method );
+			unset( $this->endpoints[ $route ][ $method ] );
+			return $endpoint;
+		}
+		return null;
 	}
 
 	/**
@@ -90,10 +93,15 @@ class Registry {
 	 * @param string $route The endpoint route.
 	 * @param string $method The endpoint method.
 	 *
-	 * @return Endpoint|null The matching endpoint in the registry or null.
+	 * @return Endpoint The matching endpoint in the registry.
 	 */
-	public function getEndpoint( string $route, string $method = Endpoint::GET ): ?Endpoint {
-		return $this->endpoints[ $route ][ $method ] ?? null;
+	public function getEndpoint( string $route, string $method = Endpoint::GET ): Endpoint {
+		if ( $this->hasEndpoint( $route, $method ) ) {
+			return $this->endpoints[ $route ][ $method ];
+		}
+
+		$error = sprintf( 'No endpoint found for %s %s in %s', $method, $route, static::class );
+		throw new ServerException( $error, 500 );
 	}
 
 	/**
@@ -112,7 +120,7 @@ class Registry {
 	/**
 	 * Adds a middleware entry to the registry.
 	 *
-	 * This method returns false if a middleware entry with the same name is
+	 * This method returns false if a middleware entry with the same id is
 	 * already registered.
 	 *
 	 * @param Middleware $middleware The middleware entry to add to the registry.
@@ -122,12 +130,12 @@ class Registry {
 	public function addMiddleware( Middleware $middleware ): bool {
 		$middleware->validate( true );
 
-		if ( $this->hasMiddleware( $middleware->name ) ) {
+		if ( $this->hasMiddleware( $middleware->id ) ) {
 			return false;
 		}
 
 		// Add middleware entry and sort by priority.
-		$this->middleware[ $middleware->name ] = $middleware;
+		$this->middleware[ $middleware->id ] = $middleware;
 		usort( $this->middleware, [ static::class, 'sortMiddleware' ] );
 
 		return true;
@@ -136,36 +144,44 @@ class Registry {
 	/**
 	 * Removes a middleware entry from the registry.
 	 *
-	 * @param string $name The middleware name.
+	 * @param string $id The middleware id.
 	 *
 	 * @return Middleware|null The middleware removed from the registry or null.
 	 */
-	public function removeMiddleware( string $name ): ?Middleware {
-		$middleware = $this->getMiddleware( $name );
-		unset( $this->middleware[ $name ] );
-		return $middleware;
+	public function removeMiddleware( string $id ): ?Middleware {
+		if ( $this->hasEndpoint( $id ) ) {
+			$middleware = $this->getMiddleware( $id );
+			unset( $this->middleware[ $id ] );
+			return $middleware;
+		}
+		return null;
 	}
 
 	/**
 	 * Checks if a middleware is registered.
 	 *
-	 * @param string $name The middleware name.
+	 * @param string $id The middleware id.
 	 *
 	 * @return bool True if a matching middleware is registered, null otherwise.
 	 */
-	public function hasMiddleware( string $name ): bool {
-		return isset( $this->middleware[ $name ] );
+	public function hasMiddleware( string $id ): bool {
+		return isset( $this->middleware[ $id ] );
 	}
 
 	/**
 	 * Gets a registered middleware entry.
 	 *
-	 * @param string $name The middleware name.
+	 * @param string $id The middleware id.
 	 *
-	 * @return Middleware|null The matching middleware in the registry or null.
+	 * @return Middleware The matching middleware in the registry.
 	 */
-	public function getMiddleware( string $name ): ?Middleware {
-		return $this->middleware[ $name ] ?? null;
+	public function getMiddleware( string $id ): Middleware {
+		if ( $this->hasEndpoint( $id ) ) {
+			return $this->middleware[ $id ];
+		}
+
+		$error = sprintf( 'Middleware %s not found in %s', $id, static::class );
+		throw new ServerException( $error, 500 );
 	}
 
 	/**

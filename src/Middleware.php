@@ -7,6 +7,7 @@ use Psr\Http\Server\MiddlewareInterface;
 /**
  * A PSR-15 middleware entry.
  *
+ * @property string $id The middleware id.
  * @property string $name The middleware name.
  * @property string $desc The middleware description.
  * @property integer $priority The middleware priority.
@@ -22,12 +23,19 @@ class Middleware extends Model {
 	 * @var array An array of model properties.
 	 */
 	protected static array $properties = [
+		'id'       => [
+			'id'       => 'id',
+			'name'     => 'Middleware id',
+			'desc'     => 'The middleware unique id',
+			'type'     => PropertyType::STRING,
+			'required' => true,
+		],
 		'name'     => [
 			'id'       => 'name',
 			'name'     => 'Middleware name',
 			'desc'     => 'The middleware name',
 			'type'     => PropertyType::STRING,
-			'required' => true,
+			'required' => false,
 		],
 		'desc'     => [
 			'id'       => 'desc',

@@ -8,6 +8,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * A server request endpoint.
  *
  * @property string $id The endpoint id, must be unique for each handler.
+ * @property string $name The endpoint name.
  * @property string $desc The endpoint description.
  * @property string $route The endpoint route.
  * @property string $method The endpoint method.
@@ -40,6 +41,13 @@ class Endpoint extends Model {
 			'desc'     => 'The endpoint id, must be unique for each handler',
 			'type'     => PropertyType::STRING,
 			'required' => true,
+		],
+		'name'    => [
+			'id'       => 'name',
+			'name'     => 'Endpoint name',
+			'desc'     => 'The endpoint name',
+			'type'     => PropertyType::STRING,
+			'required' => false,
 		],
 		'desc'    => [
 			'id'       => 'desc',

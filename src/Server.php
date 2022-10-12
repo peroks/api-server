@@ -30,7 +30,7 @@ class Server implements RequestHandlerInterface {
 	/**
 	 * The api server version.
 	 */
-	const VERSION = '0.1.1';
+	const VERSION = '0.1.2';
 
 	/**
 	 * @var object[] The server properties.
