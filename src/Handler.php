@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @copyright Per Egil Roksvaag
  * @license MIT License
  */
-class Dispatcher implements RequestHandlerInterface {
+class Handler implements RequestHandlerInterface {
 
 	/**
 	 * @var Server The api server.

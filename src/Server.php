@@ -18,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * them to the registered request handlers and middleware and returns their
  * responses.
  *
- * @property-read Dispatcher $dispatcher The PSR-15 request dispatcher.
+ * @property-read Handler $handler The internal PSR-15 request handler.
  * @property-read Registry $registry A container for registered request handlers and middleware.
  *
  * @author Per Egil Roksvaag
@@ -54,8 +54,8 @@ class Server implements RequestHandlerInterface {
 			switch ( $name ) {
 
 				// Create the PSR-15 request dispatcher.
-				case 'dispatcher':
-					$this->properties[ $name ] = new Dispatcher( $this );
+				case 'handler':
+					$this->properties[ $name ] = new Handler( $this );
 					break;
 
 				// Create the container for registered request handlers and middleware.
@@ -81,6 +81,6 @@ class Server implements RequestHandlerInterface {
 	 * @return ResponseInterface A PSR-7 response.
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
-		return $this->dispatcher->handle( $request );
+		return $this->handler->handle( $request );
 	}
 }
