@@ -1,9 +1,9 @@
 {
 	"name": "peroks/api-server",
-	"description": "An ultra light api server based on PSR-4, PSR-7, PSR-11 and PSR-15 best-practice standards.",
+	"description": "An ultra light api server based on PSR-4, PSR-7, PSR-11, PSR-14 and PSR-15 best-practice standards.",
 	"type": "library",
 	"minimum-stability": "stable",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"license": "MIT",
 	"authors": [
 		{
@@ -17,10 +17,11 @@
 		}
 	},
 	"require": {
-		"peroks/model": "^0.8.3",
+		"peroks/model": "^0.8",
 		"php": "^7.3 || ^8.0",
 		"psr/http-server-middleware": "^1.0",
-		"psr/http-server-handler": "^1.0"
+		"psr/http-server-handler": "^1.0",
+		"psr/event-dispatcher": "^1.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^9"

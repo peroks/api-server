@@ -25,6 +25,11 @@ class Registry {
 	protected array $middleware = [];
 
 	/**
+	 * @var Listener[] An array of registered PSR-14 event listeners.
+	 */
+	protected array $listeners = [];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Server $server The api server.
@@ -149,7 +154,7 @@ class Registry {
 	 * @return Middleware|null The middleware removed from the registry or null.
 	 */
 	public function removeMiddleware( string $id ): ?Middleware {
-		if ( $this->hasEndpoint( $id ) ) {
+		if ( $this->hasMiddleware( $id ) ) {
 			$middleware = $this->getMiddleware( $id );
 			unset( $this->middleware[ $id ] );
 			return $middleware;
@@ -176,7 +181,7 @@ class Registry {
 	 * @return Middleware The matching middleware in the registry.
 	 */
 	public function getMiddleware( string $id ): Middleware {
-		if ( $this->hasEndpoint( $id ) ) {
+		if ( $this->hasMiddleware( $id ) ) {
 			return $this->middleware[ $id ];
 		}
 
@@ -200,6 +205,96 @@ class Registry {
 	 * @param Middleware $b Another middleware entry to sort.
 	 */
 	protected static function sortMiddleware( Middleware $a, Middleware $b ): int {
+		return $a->priority <=> $b->priority;
+	}
+
+	/* -------------------------------------------------------------------------
+	 * Event listeners
+	 * -----------------------------------------------------------------------*/
+
+	/**
+	 * Adds an event listener to the registry.
+	 *
+	 * This method returns false if an event listener with the same id is
+	 * already registered.
+	 *
+	 * @param Listener $listener The event listener to add to the registry.
+	 *
+	 * @return bool True if the event listener was added, false otherwise.
+	 */
+	public function addListener( Listener $listener ): bool {
+		$listener->validate( true );
+
+		if ( $this->hasListener( $listener->id ) ) {
+			return false;
+		}
+
+		// Add an event listener and sort by priority.
+		$this->listeners[ $listener->id ] = $listener;
+		usort( $this->listeners, [ static::class, 'sortListener' ] );
+
+		return true;
+	}
+
+	/**
+	 * Removes an event listener from the registry.
+	 *
+	 * @param string $id The event listener id.
+	 *
+	 * @return Listener|null The event listener removed from the registry or null.
+	 */
+	public function removeListener( string $id ): ?Listener {
+		if ( $this->hasListener( $id ) ) {
+			$listener = $this->getListener( $id );
+			unset( $this->listeners[ $id ] );
+			return $listener;
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if an event listener is registered.
+	 *
+	 * @param string $id The event listener id.
+	 *
+	 * @return bool True if a matching event listener is registered, null otherwise.
+	 */
+	public function hasListener( string $id ): bool {
+		return isset( $this->listeners[ $id ] );
+	}
+
+	/**
+	 * Gets a registered event listener.
+	 *
+	 * @param string $id The event listener id.
+	 *
+	 * @return Listener The matching event listener in the registry.
+	 */
+	public function getListener( string $id ): Listener {
+		if ( $this->hasListener( $id ) ) {
+			return $this->listeners[ $id ];
+		}
+
+		$error = sprintf( 'Listener %s not found in %s', $id, static::class );
+		throw new ServerException( $error, 500 );
+	}
+
+	/**
+	 * Gets all registered event listeners.
+	 *
+	 * @return Listener[] An array of registered listener entries.
+	 */
+	public function getListeners(): array {
+		return $this->listeners;
+	}
+
+	/**
+	 * Sorts listener by priority.
+	 *
+	 * @param Listener $a An event listener to sort.
+	 * @param Listener $b Another event listener entry to sort.
+	 */
+	protected static function sortListener( Listener $a, Listener $b ): int {
 		return $a->priority <=> $b->priority;
 	}
 }
