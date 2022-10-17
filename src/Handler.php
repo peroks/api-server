@@ -67,13 +67,16 @@ class Handler implements RequestHandlerInterface {
 				$method   = $request->getMethod();
 				$endpoint = $methods[ $method ] ?? null;
 
-				if ( $endpoint ) {
-					$attributes           = array_filter( $matches, 'is_string', ARRAY_FILTER_USE_KEY );
-					$attributes['_id']    = $endpoint->id();
-					$attributes['_route'] = $endpoint->route;
-
-					return $endpoint;
+				if ( empty( $endpoint ) ) {
+					$error = 'The requested method is not allowed';
+					throw new ServerException( $error, 405 );
 				}
+
+				$attributes           = array_filter( $matches, 'is_string', ARRAY_FILTER_USE_KEY );
+				$attributes['_id']    = $endpoint->id();
+				$attributes['_route'] = $endpoint->route;
+
+				return $endpoint;
 			}
 		}
 
