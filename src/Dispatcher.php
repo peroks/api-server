@@ -18,6 +18,11 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	protected Registry $registry;
 
 	/**
+	 * @var string[] An array of event types currently being processed.
+	 */
+	protected array $processing = [];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Registry $registry A container for registered event listeners.
@@ -32,12 +37,8 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	 * @return iterable[callable] An iterable of callable event listeners.
 	 */
 	public function getListenersForEvent( object $event ): iterable {
-		$listeners = $this->registry->getListeners();
-
-		foreach ( $listeners as $listener ) {
-			if ( $listener->type === $event->type ) {
-				yield $listener->callback;
-			}
+		foreach ( $this->registry->getTypeListeners( $event->type ) as $listener ) {
+			yield $listener->id => $listener->callback;
 		}
 	}
 
@@ -49,12 +50,27 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	 * @return object The given event, now possibly modified by listeners.
 	 */
 	public function dispatch( object $event ): object {
-		foreach ( $this->getListenersForEvent( $event ) as $callback ) {
+		$this->processing[] = $event->type;
+
+		foreach ( $this->getListenersForEvent( $event ) as $id => $callback ) {
 			if ( $event->isPropagationStopped() ) {
 				break;
 			}
 			call_user_func( $callback, $event );
 		}
+
+		array_pop( $this->processing );
 		return $event;
+	}
+
+	/**
+	 * Checks if an event type is currently being processed.
+	 *
+	 * @param string $type The event type to check for.
+	 *
+	 * @return bool True if the event type is being processed, false otherwise.
+	 */
+	public function isProcessing( string $type ) {
+		return in_array( $type, $this->processing, true );
 	}
 }

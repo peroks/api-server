@@ -25,7 +25,7 @@ class Registry {
 	protected array $middleware = [];
 
 	/**
-	 * @var Listener[] An array of registered PSR-14 event listeners.
+	 * @var Listener[][] An array of registered PSR-14 event listeners.
 	 */
 	protected array $listeners = [];
 
@@ -215,8 +215,17 @@ class Registry {
 	/**
 	 * Adds an event listener to the registry.
 	 *
-	 * This method returns false if an event listener with the same id is
-	 * already registered.
+	 * This method returns false if an event listener with the same id and type
+	 * is already registered.
+	 *
+	 * The listener id must be a string which is unique for the event type. It
+	 * is used to get or remove a listener, potentially from another plugin.
+	 * In order to prevent naming conflicts, it is recommended to use an id with
+	 * a plugin prefix, like <plugin-prefix>/<listener-id>.
+	 *
+	 * The need for an id might seem a bit superfluous, but it allows you to
+	 * remove listeners without knowing the exact callback, which is very
+	 * helpful when the callback is an instance method or a closure.
 	 *
 	 * @param Listener $listener The event listener to add to the registry.
 	 *
@@ -225,13 +234,13 @@ class Registry {
 	public function addListener( Listener $listener ): bool {
 		$listener->validate( true );
 
-		if ( $this->hasListener( $listener->id ) ) {
+		if ( $this->hasListener( $listener->id, $listener->type ) ) {
 			return false;
 		}
 
 		// Add an event listener and sort by priority.
-		$this->listeners[ $listener->id ] = $listener;
-		usort( $this->listeners, [ static::class, 'sortListener' ] );
+		$this->listeners[ $listener->type ][ $listener->id ] = $listener;
+		usort( $this->listeners[ $listener->type ], [ static::class, 'sortListener' ] );
 
 		return true;
 	}
@@ -240,13 +249,14 @@ class Registry {
 	 * Removes an event listener from the registry.
 	 *
 	 * @param string $id The event listener id.
+	 * @param string $type The event type.
 	 *
 	 * @return Listener|null The event listener removed from the registry or null.
 	 */
-	public function removeListener( string $id ): ?Listener {
-		if ( $this->hasListener( $id ) ) {
-			$listener = $this->getListener( $id );
-			unset( $this->listeners[ $id ] );
+	public function removeListener( string $id, string $type ): ?Listener {
+		if ( $this->hasListener( $id, $type ) ) {
+			$listener = $this->getListener( $id, $type );
+			unset( $this->listeners[ $type ][ $id ] );
 			return $listener;
 		}
 		return null;
@@ -256,23 +266,25 @@ class Registry {
 	 * Checks if an event listener is registered.
 	 *
 	 * @param string $id The event listener id.
+	 * @param string $type The event type.
 	 *
 	 * @return bool True if a matching event listener is registered, null otherwise.
 	 */
-	public function hasListener( string $id ): bool {
-		return isset( $this->listeners[ $id ] );
+	public function hasListener( string $id, string $type ): bool {
+		return isset( $this->listeners[ $type ][ $id ] );
 	}
 
 	/**
 	 * Gets a registered event listener.
 	 *
 	 * @param string $id The event listener id.
+	 * @param string $type The event type.
 	 *
 	 * @return Listener The matching event listener in the registry.
 	 */
-	public function getListener( string $id ): Listener {
-		if ( $this->hasListener( $id ) ) {
-			return $this->listeners[ $id ];
+	public function getListener( string $id, string $type ): Listener {
+		if ( $this->hasListener( $id, $type ) ) {
+			return $this->listeners[ $type ][ $id ];
 		}
 
 		$error = sprintf( 'Listener %s not found in %s', $id, static::class );
@@ -280,9 +292,20 @@ class Registry {
 	}
 
 	/**
+	 * Gets all registered event listeners of the given type.
+	 *
+	 * @param string $type The event type.
+	 *
+	 * @return Listener[] An array of registered listeners.
+	 */
+	public function getTypeListeners( string $type ): array {
+		return $this->listeners[ $type ] ?? [];
+	}
+
+	/**
 	 * Gets all registered event listeners.
 	 *
-	 * @return Listener[] An array of registered listener entries.
+	 * @return Listener[][] An array containing registered listener.
 	 */
 	public function getListeners(): array {
 		return $this->listeners;
@@ -292,7 +315,7 @@ class Registry {
 	 * Sorts listener by priority.
 	 *
 	 * @param Listener $a An event listener to sort.
-	 * @param Listener $b Another event listener entry to sort.
+	 * @param Listener $b Another event listener to sort.
 	 */
 	protected static function sortListener( Listener $a, Listener $b ): int {
 		return $a->priority <=> $b->priority;
