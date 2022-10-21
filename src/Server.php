@@ -80,7 +80,7 @@ class Server implements RequestHandlerInterface {
 	}
 
 	/**
-	 * Forwards a request to the server request dispatcher.
+	 * Forwards a request to the internal request handler.
 	 *
 	 * @param ServerRequestInterface $request A PSR-7 server request.
 	 *

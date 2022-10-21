@@ -2,6 +2,7 @@
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
  * A PSR-14 listener provider and event dispatcher.
@@ -53,7 +54,7 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 		$this->processing[] = $event->type;
 
 		foreach ( $this->getListenersForEvent( $event ) as $id => $callback ) {
-			if ( $event->isPropagationStopped() ) {
+			if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
 				break;
 			}
 			call_user_func( $callback, $event );
