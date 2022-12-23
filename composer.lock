@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "peroks/model",
-            "version": "0.8.6",
+            "version": "0.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/peroks/model.git",
-                "reference": "936f5aed54fa92d4bf7bef4306ead39d169c11c5"
+                "reference": "0d0e2010d3d858a5b0fbcb3aeaa4f9ba6612f446"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/peroks/model/zipball/936f5aed54fa92d4bf7bef4306ead39d169c11c5",
-                "reference": "936f5aed54fa92d4bf7bef4306ead39d169c11c5",
+                "url": "https://api.github.com/repos/peroks/model/zipball/0d0e2010d3d858a5b0fbcb3aeaa4f9ba6612f446",
+                "reference": "0d0e2010d3d858a5b0fbcb3aeaa4f9ba6612f446",
                 "shasum": ""
             },
             "require": {
@@ -45,9 +45,9 @@
             "description": "Models: Classes with built-in data validation",
             "support": {
                 "issues": "https://github.com/peroks/model/issues",
-                "source": "https://github.com/peroks/model/tree/0.8.6"
+                "source": "https://github.com/peroks/model/tree/0.8.8"
             },
-            "time": "2022-10-21T22:48:12+00:00"
+            "time": "2022-12-14T19:14:44+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -566,16 +566,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.21",
+            "version": "9.2.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0"
+                "reference": "e4bf60d2220b4baaa0572986b5d69870226b06df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
-                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/e4bf60d2220b4baaa0572986b5d69870226b06df",
+                "reference": "e4bf60d2220b4baaa0572986b5d69870226b06df",
                 "shasum": ""
             },
             "require": {
@@ -631,7 +631,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.21"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.22"
             },
             "funding": [
                 {
@@ -639,7 +639,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-14T13:26:54+00:00"
+            "time": "2022-12-18T16:40:55+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
