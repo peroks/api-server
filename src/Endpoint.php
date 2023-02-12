@@ -32,6 +32,11 @@ class Endpoint extends Model {
 	const TRACE   = 'TRACE';
 
 	/**
+	 * @var string The model's id property.
+	 */
+	protected static string $idProperty = 'id';
+
+	/**
 	 * @var array An array of model properties.
 	 */
 	protected static array $properties = [

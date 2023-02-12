@@ -20,6 +20,11 @@ use Peroks\Model\PropertyType;
 class Listener extends Model {
 
 	/**
+	 * @var string The model's id property.
+	 */
+	protected static string $idProperty = 'id';
+
+	/**
 	 * @var array An array of model properties.
 	 */
 	protected static array $properties = [
