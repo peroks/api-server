@@ -71,7 +71,7 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	 *
 	 * @return bool True if the event type is being processed, false otherwise.
 	 */
-	public function isProcessing( string $type ) {
+	public function isProcessing( string $type ): bool {
 		return in_array( $type, $this->processing, true );
 	}
 }

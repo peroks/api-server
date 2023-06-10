@@ -57,7 +57,7 @@ class Handler implements RequestHandlerInterface {
 	 * @return Endpoint The matching endpoint.
 	 * @throws ServerException
 	 */
-	protected function getEndpoint( ServerRequestInterface $request, &$attributes = null ): Endpoint {
+	protected function getEndpoint( ServerRequestInterface $request, mixed &$attributes = null ): Endpoint {
 		$endpoints  = $this->registry->getEndpoints();
 		$attributes = is_array( $attributes ) ? $attributes : [];
 		$path       = $request->getUri()->getPath();

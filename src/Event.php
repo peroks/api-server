@@ -19,7 +19,7 @@ class Event implements StoppableEventInterface {
 	/**
 	 * @var mixed The event data.
 	 */
-	public $data;
+	public mixed $data;
 
 	/**
 	 * @var bool Whether the event propagation as stopped or not.
@@ -32,7 +32,7 @@ class Event implements StoppableEventInterface {
 	 * @param string $type The event type.
 	 * @param mixed $data The event data.
 	 */
-	public function __construct( string $type, $data = [] ) {
+	public function __construct( string $type, mixed $data = [] ) {
 		$this->type = $type;
 		$this->data = $data;
 	}

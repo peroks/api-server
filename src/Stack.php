@@ -22,7 +22,7 @@ class Stack implements RequestHandlerInterface {
 	/**
 	 * @var MiddlewareInterface|RequestHandlerInterface $next The next middleware in the stack.
 	 */
-	protected $next;
+	protected MiddlewareInterface | RequestHandlerInterface $next;
 
 	/**
 	 * Constructor.
