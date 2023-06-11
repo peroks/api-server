@@ -58,6 +58,6 @@
 		"sort-packages": true
 	},
 	"scripts": {
-		"test": "./vendor/bin/phpunit tests"
+		"tests": "./vendor/bin/phpunit tests"
 	}
 }
