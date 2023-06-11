@@ -1,4 +1,4 @@
-<?php namespace Peroks\ApiServer;
+<?php namespace Peroks\ApiServer\Tests;
 
 use Peroks\Model\Model;
 use Peroks\Model\PropertyType;
