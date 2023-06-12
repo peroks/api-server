@@ -14,23 +14,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 class Handler implements RequestHandlerInterface {
 
 	/**
-	 * @var Server The api server.
-	 */
-	protected Server $server;
-
-	/**
-	 * @var Registry The server registry.
+	 * @var Registry A container for registered event listeners.
 	 */
 	protected Registry $registry;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Server $server The api server.
+	 * @param Registry $registry A container of registered endpoints.
 	 */
-	public function __construct( Server $server ) {
-		$this->server   = $server;
-		$this->registry = $server->registry;
+	public function __construct( Registry $registry ) {
+		$this->registry = $registry;
 	}
 
 	/**

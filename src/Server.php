@@ -18,10 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  * them to the registered request handlers and middleware and returns their
  * responses.
  *
- * @property-read Handler $handler The internal PSR-15 request handler.
- * @property-read Registry $registry A container for registered request handlers, middleware and event listeners.
- * @property-read Dispatcher $dispatcher A PSR-14 listener provider and event dispatcher.
- *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
@@ -31,52 +27,34 @@ class Server implements RequestHandlerInterface {
 	/**
 	 * The api server version.
 	 */
-	const VERSION = '0.2.0';
+	const VERSION = '0.5.0';
 
 	/**
-	 * @var object[] The server properties.
+	 * @var Registry A container for registered request handlers, middleware and event listeners.
 	 */
-	protected array $properties = [];
+	public readonly Registry $registry;
+
+	/**
+	 * @var RequestHandlerInterface The internal PSR-15 request handler.
+	 */
+	public readonly RequestHandlerInterface $handler;
+
+	/**
+	 * @var DispatcherInterface A PSR-14 listener provider and event dispatcher.
+	 */
+	public readonly DispatcherInterface $dispatcher;
 
 	/**
 	 * Constructor.
-	 */
-	public function __construct() {}
-
-	/**
-	 * Provides protected access to server properties.
 	 *
-	 * @param string $name The name of the property to get.
-	 *
-	 * @return object A server property.
+	 * @param Registry|null $registry A container for registered request handlers, middleware and event listeners.
+	 * @param RequestHandlerInterface|null $handler The internal PSR-15 request handler.
+	 * @param DispatcherInterface|null $dispatcher A PSR-14 listener provider and event dispatcher.
 	 */
-	public function __get( string $name ): object {
-		if ( empty( $this->properties[ $name ] ) ) {
-			switch ( $name ) {
-
-				// Create the internal PSR-15 request handler.
-				case 'handler':
-					$this->properties[ $name ] = new Handler( $this );
-					break;
-
-				// Create the container for registered request handlers and middleware.
-				case 'registry':
-					$this->properties[ $name ] = new Registry( $this );
-					break;
-
-				// Create the internal PSR-14 listener provider and event dispatcher.
-				case 'dispatcher':
-					$this->properties[ $name ] = new Dispatcher( $this->registry );
-					break;
-
-				// Throws an exception if the property name doesn't exist.
-				default:
-					$error = sprintf( 'The property %s does not exist in %s', $name, static::class );
-					throw new ServerException( $error, 500 );
-			}
-		}
-
-		return $this->properties[ $name ];
+	public function __construct( Registry $registry = null, RequestHandlerInterface $handler = null, DispatcherInterface $dispatcher = null ) {
+		$this->registry   = $registry ?? new Registry();
+		$this->handler    = $handler ?? new Handler( $this->registry );
+		$this->dispatcher = $dispatcher ?? new Dispatcher( $this->registry );
 	}
 
 	/**

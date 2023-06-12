@@ -1,7 +1,5 @@
 <?php namespace Peroks\ApiServer;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
@@ -11,7 +9,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
  * @copyright Per Egil Roksvaag
  * @license MIT License
  */
-class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface {
+class Dispatcher implements DispatcherInterface {
 
 	/**
 	 * @var Registry A container for registered event listeners.
@@ -26,7 +24,7 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	/**
 	 * Constructor.
 	 *
-	 * @param Registry $registry A container for registered event listeners.
+	 * @param Registry $registry A container of registered event listeners.
 	 */
 	public function __construct( Registry $registry ) {
 		$this->registry = $registry;
@@ -53,7 +51,7 @@ class Dispatcher implements EventDispatcherInterface, ListenerProviderInterface 
 	public function dispatch( object $event ): object {
 		$this->processing[] = $event->type;
 
-		foreach ( $this->getListenersForEvent( $event ) as $id => $callback ) {
+		foreach ( $this->getListenersForEvent( $event ) as $callback ) {
 			if ( $event instanceof StoppableEventInterface && $event->isPropagationStopped() ) {
 				break;
 			}

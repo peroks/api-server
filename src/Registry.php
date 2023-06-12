@@ -10,11 +10,6 @@
 class Registry {
 
 	/**
-	 * @var Server The api server.
-	 */
-	protected Server $server;
-
-	/**
 	 * @var Endpoint[] An array of registered endpoints for PSR-15 handlers.
 	 */
 	protected array $endpoints = [];
@@ -28,15 +23,6 @@ class Registry {
 	 * @var Listener[][] An array of registered PSR-14 event listeners.
 	 */
 	protected array $listeners = [];
-
-	/**
-	 * Constructor.
-	 *
-	 * @param Server $server The api server.
-	 */
-	public function __construct( Server $server ) {
-		$this->server = $server;
-	}
 
 	/* -------------------------------------------------------------------------
 	 * Endpoints
@@ -141,8 +127,6 @@ class Registry {
 
 		// Add middleware entry and sort by priority.
 		$this->middleware[ $middleware->id ] = $middleware;
-		usort( $this->middleware, [ static::class, 'sortMiddleware' ] );
-
 		return true;
 	}
 
@@ -190,12 +174,14 @@ class Registry {
 	}
 
 	/**
-	 * Gets all registered middleware instances.
+	 * Gets all registered middleware instances sorted by priority.
 	 *
 	 * @return Middleware[] An array of registered middleware entries.
 	 */
 	public function getMiddlewareEntries(): array {
-		return $this->middleware;
+		$entries = $this->middleware;
+		usort( $entries, [ static::class, 'sortMiddleware' ] );
+		return $entries;
 	}
 
 	/**
