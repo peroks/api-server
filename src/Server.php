@@ -35,7 +35,7 @@ class Server implements RequestHandlerInterface {
 	public readonly Registry $registry;
 
 	/**
-	 * @var RequestHandlerInterface The internal PSR-15 request handler.
+	 * @var RequestHandlerInterface The internal PSR-15 request handler and distributor.
 	 */
 	public readonly RequestHandlerInterface $handler;
 
@@ -48,7 +48,7 @@ class Server implements RequestHandlerInterface {
 	 * Constructor.
 	 *
 	 * @param Registry|null $registry A container for registered request handlers, middleware and event listeners.
-	 * @param RequestHandlerInterface|null $handler The internal PSR-15 request handler.
+	 * @param RequestHandlerInterface|null $handler The internal PSR-15 request handler and distributor.
 	 * @param DispatcherInterface|null $dispatcher A PSR-14 listener provider and event dispatcher.
 	 */
 	public function __construct( Registry $registry = null, RequestHandlerInterface $handler = null, DispatcherInterface $dispatcher = null ) {

@@ -1,6 +1,8 @@
 <?php namespace Peroks\ApiServer\Tests;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Peroks\ApiServer\Dispatcher;
+use Peroks\ApiServer\Endpoint;
 use Peroks\ApiServer\Handler;
 use Peroks\ApiServer\Middleware;
 use Peroks\ApiServer\Registry;
@@ -40,17 +42,93 @@ final class ApiServerTest extends TestCase {
 	}
 
 	/**
-	 * Check server instances.
+	 * Check core server instances.
 	 *
 	 * @return void
 	 */
-	public function testServerInstances(): void {
+	public function testCoreInstances(): void {
 		$this->assertInstanceOf( Server::class, $this->server );
 		$this->assertInstanceOf( Registry::class, $this->server->registry );
 		$this->assertInstanceOf( Handler::class, $this->server->handler );
 		$this->assertInstanceOf( Dispatcher::class, $this->server->dispatcher );
 	}
 
+	/**
+	 * Registers server endpoints and checks their results.
+	 */
+	public function testRegisterEndpoints(): void {
+
+		// Create a request handler.
+		$handler = new TestHandler();
+
+		// Create an endpoint for saying "Hallo World".
+		$hello = new Endpoint( [
+			'id'      => 'hello',
+			'route'   => '/test',
+			'method'  => Endpoint::GET,
+			'handler' => $handler,
+		] );
+
+		// Create an endpoint for echoing a greeting.
+		$echo = new Endpoint( [
+			'id'      => 'echo',
+			'route'   => '/test',
+			'method'  => Endpoint::POST,
+			'handler' => $handler,
+		] );
+
+		// Register a new endpoint and check the result.
+		$result = $this->server->registry->addEndpoint( $hello );
+		$this->assertTrue( $result );
+
+		// Register a second endpoint and check the result.
+		$result = $this->server->registry->addEndpoint( $echo );
+		$this->assertTrue( $result );
+
+		// The endpoint must be unique, so the same endpoint can't be registered twice.
+		$result = $this->server->registry->addEndpoint( $echo );
+		$this->assertFalse( $result );
+
+		// Check that the echo endpoint is registered.
+		$result = $this->server->registry->hasEndpoint( $echo->route, $echo->method );
+		$this->assertTrue( $result );
+
+		// Check that the correct endpoint is returned.
+		$result = $this->server->registry->getEndpoint( $echo->route, $echo->method );
+		$this->assertEquals( $echo, $result );
+
+		// Check that both endpoints are registered.
+		$result = current( $this->server->registry->getEndpoints() );
+		$this->assertCount( 2, $result );
+		$this->assertEquals( $hello, $result[ $hello->method ] );
+		$this->assertEquals( $echo, $result[ $echo->method ] );
+
+		// Send a GET request and check the result.
+		$request  = new ServerRequest( 'GET', '/test' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 'Hello World', $response->getBody() );
+
+		// Send a POST request and check the result.
+		$request  = new ServerRequest( 'POST', '/test', [], 'Greetings' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 'Greetings', $response->getBody() );
+
+		// Remove the hello endpoint and check the result.
+		$result = $this->server->registry->removeEndpoint( $hello->route );
+		$this->assertEquals( $hello, $result );
+
+		// Check that the hello endpoint was removed.
+		$result = $this->server->registry->hasEndpoint( $hello->route );
+		$this->assertFalse( $result );
+
+		// Check that getting an unregistered entry is throwing an exception.
+		$this->expectException( ServerException::class );
+		$this->server->registry->getEndpoint( $hello->route );
+	}
+
+	/**
+	 * Registers server middleware and checks their results.
+	 */
 	public function testRegisterMiddleware(): void {
 
 		// Create a middleware entry for testing.
@@ -81,7 +159,7 @@ final class ApiServerTest extends TestCase {
 		$result = $this->server->registry->getMiddleware( $entry->id );
 		$this->assertEquals( $entry, $result );
 
-		// Check that one middleware entries are registered..
+		// Check that one middleware entries are registered.
 		$result = $this->server->registry->getMiddlewareEntries();
 		$this->assertCount( 1, $result );
 		$this->assertEquals( $entry, $result[0] );
@@ -97,13 +175,6 @@ final class ApiServerTest extends TestCase {
 		// Check that getting an unregistered entry is throwing an exception.
 		$this->expectException( ServerException::class );
 		$this->server->registry->getMiddleware( $entry->id );
-	}
-
-	#[DataProvider( 'getTestData' )]
-	public function testEndpoint(): void {
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
-		);
 	}
 
 	#[DataProvider( 'getTestData' )]

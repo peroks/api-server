@@ -47,6 +47,7 @@
 		"psr/event-dispatcher": "^1.0"
 	},
 	"require-dev": {
+		"guzzlehttp/psr7": "^2.5",
 		"phpunit/phpunit": "^10"
 	},
 	"provide": {
