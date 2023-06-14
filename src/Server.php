@@ -55,6 +55,7 @@ class Server implements RequestHandlerInterface {
 		$this->registry   = $registry ?? new Registry();
 		$this->handler    = $handler ?? new Handler( $this );
 		$this->dispatcher = $dispatcher ?? new Dispatcher( $this->registry );
+		$this->dispatcher->dispatch( new Event( 'server/init', $this ) );
 	}
 
 	/**
@@ -65,6 +66,21 @@ class Server implements RequestHandlerInterface {
 	 * @return ResponseInterface A PSR-7 response.
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
-		return $this->handler->handle( $request );
+		$requestEvent = new Event( 'server/request', (object) [
+			'server'  => $this,
+			'request' => $request,
+		] );
+
+		$requestEvent = $this->dispatcher->dispatch( $requestEvent );
+		$response     = $this->handler->handle( $requestEvent->data->request );
+
+		$responseEvent = new Event( 'server/response', (object) [
+			'server'   => $this,
+			'request'  => $request,
+			'response' => $response,
+		] );
+
+		$responseEvent = $this->dispatcher->dispatch( $responseEvent );
+		return $responseEvent->data->response;
 	}
 }

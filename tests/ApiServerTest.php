@@ -217,9 +217,9 @@ final class ApiServerTest extends TestCase {
 		// Create an event listener that adds authorization to all requests.
 		$listener = new Listener( [
 			'id'       => 'test',
-			'type'     => 'handle',
+			'type'     => 'handler/request',
 			'callback' => function( Event $event ) {
-				$event->data = $event->data->withHeader( 'authorization', 'yes' );
+				$event->data->request = $event->data->request->withHeader( 'authorization', 'yes' );
 			},
 		] );
 
@@ -274,11 +274,5 @@ final class ApiServerTest extends TestCase {
 		// Check that getting an unregistered event listener is throwing an exception.
 		$this->expectException( ServerException::class );
 		$this->server->registry->getEndpoint( $listener->id, $listener->type );
-	}
-
-	public function testPlaceholder(): void {
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
-		);
 	}
 }

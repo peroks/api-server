@@ -32,9 +32,9 @@ class Event implements StoppableEventInterface {
 	 * @param string $type The event type.
 	 * @param mixed $data The event data.
 	 */
-	public function __construct( string $type, mixed $data = [] ) {
+	public function __construct( string $type, mixed $data = null ) {
 		$this->type = $type;
-		$this->data = $data;
+		$this->data = $data ?? (object) [];
 	}
 
 	/**
