@@ -226,8 +226,6 @@ class Registry {
 
 		// Add an event listener and sort by priority.
 		$this->listeners[ $listener->type ][ $listener->id ] = $listener;
-		usort( $this->listeners[ $listener->type ], [ static::class, 'sortListener' ] );
-
 		return true;
 	}
 
@@ -285,7 +283,9 @@ class Registry {
 	 * @return Listener[] An array of registered listeners.
 	 */
 	public function getTypeListeners( string $type ): array {
-		return $this->listeners[ $type ] ?? [];
+		$listeners = $this->listeners[ $type ] ?? [];
+		usort( $listeners, [ static::class, 'sortListener' ] );
+		return $listeners;
 	}
 
 	/**
@@ -294,7 +294,12 @@ class Registry {
 	 * @return Listener[][] An array containing registered listener.
 	 */
 	public function getListeners(): array {
-		return $this->listeners;
+		$allListeners = $this->listeners;
+
+		foreach( $allListeners as $type => &$listeners ) {
+			usort( $listeners, [ static::class, 'sortListener' ] );
+		}
+		return $allListeners;
 	}
 
 	/**

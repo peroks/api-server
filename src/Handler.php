@@ -14,17 +14,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 class Handler implements RequestHandlerInterface {
 
 	/**
-	 * @var Registry A container for registered event listeners.
+	 * @var Server The Api Server.
 	 */
-	protected Registry $registry;
+	protected Server $server;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Registry $registry A container of registered endpoints.
+	 * @param Server $server The Api Server.
 	 */
-	public function __construct( Registry $registry ) {
-		$this->registry = $registry;
+	public function __construct( Server $server ) {
+		$this->server = $server;
 	}
 
 	/**
@@ -39,7 +39,9 @@ class Handler implements RequestHandlerInterface {
 		$request  = $this->addAttributes( $request, $attributes );
 		$stack    = $this->getStack( $endpoint->handler );
 
-		return $stack->handle( $request );
+		$event = new Event( 'handle', $request );
+		$this->server->dispatcher->dispatch( $event );
+		return $stack->handle( $event->data );
 	}
 
 	/**
@@ -52,7 +54,7 @@ class Handler implements RequestHandlerInterface {
 	 * @throws ServerException
 	 */
 	protected function getEndpoint( ServerRequestInterface $request, mixed &$attributes = null ): Endpoint {
-		$endpoints  = $this->registry->getEndpoints();
+		$endpoints  = $this->server->registry->getEndpoints();
 		$attributes = is_array( $attributes ) ? $attributes : [];
 		$path       = $request->getUri()->getPath();
 
@@ -101,7 +103,7 @@ class Handler implements RequestHandlerInterface {
 	 * @return Stack The middleware stack.
 	 */
 	protected function getStack( RequestHandlerInterface $handler ): Stack {
-		$entries    = $this->registry->getMiddlewareEntries();
+		$entries    = $this->server->registry->getMiddlewareEntries();
 		$middleware = array_column( $entries, 'instance' );
 
 		return new Stack( $middleware, $handler );

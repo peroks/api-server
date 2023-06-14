@@ -3,7 +3,9 @@
 use GuzzleHttp\Psr7\ServerRequest;
 use Peroks\ApiServer\Dispatcher;
 use Peroks\ApiServer\Endpoint;
+use Peroks\ApiServer\Event;
 use Peroks\ApiServer\Handler;
+use Peroks\ApiServer\Listener;
 use Peroks\ApiServer\Middleware;
 use Peroks\ApiServer\Registry;
 use Peroks\ApiServer\Server;
@@ -55,7 +57,7 @@ final class ApiServerTest extends TestCase {
 	/**
 	 * Registers server endpoints and checks their results.
 	 */
-	public function testRegisterEndpoints(): void {
+	public function testEndpoints(): void {
 
 		// Create a request handler.
 		$handler = new TestHandler();
@@ -128,10 +130,10 @@ final class ApiServerTest extends TestCase {
 	/**
 	 * Registers server middleware and checks their results.
 	 */
-	public function testRegisterMiddleware(): void {
+	public function testMiddleware(): void {
 
 		// Register an endpoint.
-		$result = $this->server->registry->addEndpoint( new Endpoint( [
+		$this->server->registry->addEndpoint( new Endpoint( [
 			'id'      => 'echo',
 			'route'   => '/test',
 			'method'  => Endpoint::POST,
@@ -194,10 +196,84 @@ final class ApiServerTest extends TestCase {
 		$this->server->registry->getMiddleware( $entry->id );
 	}
 
-	public function testRegisterDispatcher(): void {
-		$this->markTestIncomplete(
-			'This test has not been implemented yet.'
-		);
+	public function testDispatcher(): void {
+
+		// Register an endpoint.
+		$this->server->registry->addEndpoint( new Endpoint( [
+			'id'      => 'echo',
+			'route'   => '/test',
+			'method'  => Endpoint::POST,
+			'handler' => new TestHandler(),
+		] ) );
+
+		// Register a middleware.
+		$this->server->registry->addMiddleware( new Middleware( [
+			'id'       => TestMiddleware::class,
+			'name'     => 'Middleware instance for testing',
+			'priority' => 20,
+			'instance' => new TestMiddleware(),
+		] ) );
+
+		// Create an event listener that adds authorization to all requests.
+		$listener = new Listener( [
+			'id'       => 'test',
+			'type'     => 'handle',
+			'callback' => function( Event $event ) {
+				$event->data = $event->data->withHeader( 'authorization', 'yes' );
+			},
+		] );
+
+		// Since the event listener is not yet registered, it should not be found.
+		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$this->assertFalse( $result );
+
+		// The middleware returns 403 Forbidden for all unauthorized requests.
+		$request  = new ServerRequest( 'POST', '/test', [], 'Hello World' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 403, $response->getStatusCode() );
+
+		// Register the event listener and check the result.
+		$result = $this->server->registry->addListener( $listener );
+		$this->assertTrue( $result );
+
+		// The listener id and type must be unique, so the same entry can't be registered twice.
+		$result = $this->server->registry->addListener( $listener );
+		$this->assertFalse( $result );
+
+		// Check that the event listener is registered.
+		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$this->assertTrue( $result );
+
+		// Check that the correct event listener is returned.
+		$result = $this->server->registry->getListener( $listener->id, $listener->type );
+		$this->assertEquals( $listener, $result );
+
+		// Check that one event listener is registered for the "handle" event.
+		$result = $this->server->registry->getTypeListeners( $listener->type );
+		$this->assertCount( 1, $result );
+		$this->assertEquals( $listener, $result[0] );
+
+		// Check that the event listener are registered.
+		$result = current( $this->server->registry->getListeners() );
+		$this->assertCount( 1, $result );
+		$this->assertEquals( $listener, current( $result ) );
+
+		// Now the request is authorized by the event listener.
+		$request  = new ServerRequest( 'POST', '/test', [], 'Hello World' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 'Hello World', $response->getBody() );
+
+		// Remove the event listener and check the result.
+		$result = $this->server->registry->removeListener( $listener->id, $listener->type );
+		$this->assertEquals( $listener, $result );
+
+		// Check that the event listener was removed.
+		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$this->assertFalse( $result );
+
+		// Check that getting an unregistered event listener is throwing an exception.
+		$this->expectException( ServerException::class );
+		$this->server->registry->getEndpoint( $listener->id, $listener->type );
 	}
 
 	public function testPlaceholder(): void {

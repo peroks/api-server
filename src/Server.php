@@ -53,7 +53,7 @@ class Server implements RequestHandlerInterface {
 	 */
 	public function __construct( Registry $registry = null, RequestHandlerInterface $handler = null, DispatcherInterface $dispatcher = null ) {
 		$this->registry   = $registry ?? new Registry();
-		$this->handler    = $handler ?? new Handler( $this->registry );
+		$this->handler    = $handler ?? new Handler( $this );
 		$this->dispatcher = $dispatcher ?? new Dispatcher( $this->registry );
 	}
 
