@@ -52,9 +52,9 @@ class Server implements RequestHandlerInterface {
 	 * @param DispatcherInterface|null $dispatcher A PSR-14 listener provider and event dispatcher.
 	 */
 	public function __construct( Registry $registry = null, RequestHandlerInterface $handler = null, DispatcherInterface $dispatcher = null ) {
-		$this->registry   = $registry ?? new Registry();
+		$this->registry   = $registry ?? new Registry( $this );
 		$this->handler    = $handler ?? new Handler( $this );
-		$this->dispatcher = $dispatcher ?? new Dispatcher( $this->registry );
+		$this->dispatcher = $dispatcher ?? new Dispatcher( $this );
 		$this->dispatcher->dispatch( new Event( 'server/init', $this ) );
 	}
 
@@ -71,16 +71,11 @@ class Server implements RequestHandlerInterface {
 			'request' => $request,
 		] );
 
-		$requestEvent = $this->dispatcher->dispatch( $requestEvent );
-		$response     = $this->handler->handle( $requestEvent->data->request );
+		$data           = $this->dispatcher->dispatch( $requestEvent )->data;
+		$data->response = $this->handler->handle( $data->request );
+		$responseEvent  = new Event( 'server/response', $data );
 
-		$responseEvent = new Event( 'server/response', (object) [
-			'server'   => $this,
-			'request'  => $request,
-			'response' => $response,
-		] );
-
-		$responseEvent = $this->dispatcher->dispatch( $responseEvent );
-		return $responseEvent->data->response;
+		$data = $this->dispatcher->dispatch( $responseEvent )->data;
+		return $data->response;
 	}
 }

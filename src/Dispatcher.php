@@ -12,22 +12,22 @@ use Psr\EventDispatcher\StoppableEventInterface;
 class Dispatcher implements DispatcherInterface {
 
 	/**
-	 * @var Registry A container for registered event listeners.
-	 */
-	protected Registry $registry;
-
-	/**
 	 * @var string[] An array of event types currently being processed.
 	 */
 	protected array $processing = [];
 
 	/**
+	 * @var Server The Api Server.
+	 */
+	protected Server $server;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param Registry $registry A container of registered event listeners.
+	 * @param Server $server The Api Server.
 	 */
-	public function __construct( Registry $registry ) {
-		$this->registry = $registry;
+	public function __construct( Server $server ) {
+		$this->server = $server;
 	}
 
 	/**
@@ -36,7 +36,7 @@ class Dispatcher implements DispatcherInterface {
 	 * @return iterable[callable] An iterable of callable event listeners.
 	 */
 	public function getListenersForEvent( object $event ): iterable {
-		foreach ( $this->registry->getTypeListeners( $event->type ) as $listener ) {
+		foreach ( $this->server->registry->getTypeListeners( $event->type ) as $listener ) {
 			yield $listener->id => $listener->callback;
 		}
 	}

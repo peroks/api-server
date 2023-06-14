@@ -46,19 +46,12 @@ class Handler implements RequestHandlerInterface {
 			'request'  => $request,
 		] );
 
-		$requestEvent = $this->server->dispatcher->dispatch( $requestEvent );
-		$response     = $stack->handle( $requestEvent->data->request );
+		$data           = $this->server->dispatcher->dispatch( $requestEvent )->data;
+		$data->response = $data->stack->handle( $data->request );
+		$responseEvent  = new Event( 'handler/response', $data );
 
-		$responseEvent = new Event( 'handler/response', (object) [
-			'handler'  => $this,
-			'stack'    => $stack,
-			'endpoint' => $endpoint,
-			'request'  => $request,
-			'response' => $response,
-		] );
-
-		$responseEvent = $this->server->dispatcher->dispatch( $responseEvent );
-		return $responseEvent->data->response;
+		$data = $this->server->dispatcher->dispatch( $responseEvent )->data;
+		return $data->response;
 	}
 
 	/**

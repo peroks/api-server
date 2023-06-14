@@ -24,6 +24,20 @@ class Registry {
 	 */
 	protected array $listeners = [];
 
+	/**
+	 * @var Server The Api Server.
+	 */
+	protected Server $server;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Server $server The Api Server.
+	 */
+	public function __construct( Server $server ) {
+		$this->server = $server;
+	}
+
 	/* -------------------------------------------------------------------------
 	 * Endpoints
 	 * -----------------------------------------------------------------------*/
@@ -296,7 +310,7 @@ class Registry {
 	public function getListeners(): array {
 		$allListeners = $this->listeners;
 
-		foreach( $allListeners as $type => &$listeners ) {
+		foreach ( $allListeners as &$listeners ) {
 			usort( $listeners, [ static::class, 'sortListener' ] );
 		}
 		return $allListeners;
