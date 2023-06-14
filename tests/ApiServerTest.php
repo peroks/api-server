@@ -8,7 +8,6 @@ use Peroks\ApiServer\Middleware;
 use Peroks\ApiServer\Registry;
 use Peroks\ApiServer\Server;
 use Peroks\ApiServer\ServerException;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -131,6 +130,14 @@ final class ApiServerTest extends TestCase {
 	 */
 	public function testRegisterMiddleware(): void {
 
+		// Register an endpoint.
+		$result = $this->server->registry->addEndpoint( new Endpoint( [
+			'id'      => 'echo',
+			'route'   => '/test',
+			'method'  => Endpoint::POST,
+			'handler' => new TestHandler(),
+		] ) );
+
 		// Create a middleware entry for testing.
 		$entry = Middleware::create( [
 			'id'       => TestMiddleware::class,
@@ -164,6 +171,16 @@ final class ApiServerTest extends TestCase {
 		$this->assertCount( 1, $result );
 		$this->assertEquals( $entry, $result[0] );
 
+		// The middleware returns 403 Forbidden for all unauthorized requests.
+		$request  = new ServerRequest( 'POST', '/test', [], 'Hello World' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 403, $response->getStatusCode() );
+
+		// The middleware lets authorized requests pass through.
+		$request  = new ServerRequest( 'POST', '/test', [ 'authorization' => 'yes' ], 'Hello World' );
+		$response = $this->server->handle( $request );
+		$this->assertEquals( 'Hello World', $response->getBody() );
+
 		// Remove the middleware entry and check the result.
 		$result = $this->server->registry->removeMiddleware( $entry->id );
 		$this->assertEquals( $entry, $result );
@@ -177,7 +194,12 @@ final class ApiServerTest extends TestCase {
 		$this->server->registry->getMiddleware( $entry->id );
 	}
 
-	#[DataProvider( 'getTestData' )]
+	public function testRegisterDispatcher(): void {
+		$this->markTestIncomplete(
+			'This test has not been implemented yet.'
+		);
+	}
+
 	public function testPlaceholder(): void {
 		$this->markTestIncomplete(
 			'This test has not been implemented yet.'
