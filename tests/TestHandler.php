@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Handler class for testing purposes.
+ *  PSR-15 Server Request Handler implementation for testing purposes.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag

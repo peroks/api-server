@@ -75,7 +75,7 @@ class Registry {
 	 *
 	 * @return Endpoint|null The endpoint removed from the registry or null.
 	 */
-	public function removeEndpoint( string $route, string $method = Endpoint::GET ): ?Endpoint {
+	public function removeEndpoint( string $route, string $method = Endpoint::GET ): Endpoint | null {
 		if ( $this->hasEndpoint( $route, $method ) ) {
 			$endpoint = $this->getEndpoint( $route, $method );
 			unset( $this->endpoints[ $route ][ $method ] );
@@ -191,7 +191,7 @@ class Registry {
 	 *
 	 * @return Middleware|null The middleware removed from the registry or null.
 	 */
-	public function removeMiddleware( string $id ): ?Middleware {
+	public function removeMiddleware( string $id ): Middleware | null {
 		if ( $this->hasMiddleware( $id ) ) {
 			$middleware = $this->getMiddleware( $id );
 			unset( $this->middleware[ $id ] );
@@ -325,7 +325,7 @@ class Registry {
 	 *
 	 * @return Listener|null The event listener removed from the registry or null.
 	 */
-	public function removeListener( string $id, string $type ): ?Listener {
+	public function removeListener( string $id, string $type ): Listener | null {
 		if ( $this->hasListener( $id, $type ) ) {
 			$listener = $this->getListener( $id, $type );
 			unset( $this->listeners[ $type ][ $id ] );

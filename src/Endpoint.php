@@ -12,7 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @property string $desc The endpoint description.
  * @property string $route The endpoint route.
  * @property string $method The endpoint method.
- * @property RequestHandlerInterface $handler The endpoint request handler.
+ * @property RequestHandlerInterface $handler A PSR-15 request handler.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag

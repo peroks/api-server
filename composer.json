@@ -9,13 +9,12 @@
 		"PSR-7",
 		"PSR-14",
 		"PSR-15",
-		"http-server-middleware",
-		"http-server-handler",
+		"server-middleware",
+		"server-handler",
 		"event-dispatcher",
-		"middleware",
 		"request-handler",
-		"api-server",
-		"json-server"
+		"rest-server",
+		"api-server"
 	],
 	"authors": [
 		{
