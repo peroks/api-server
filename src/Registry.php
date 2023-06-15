@@ -80,15 +80,15 @@ class Registry {
 			$endpoint = $this->getEndpoint( $route, $method );
 			unset( $this->endpoints[ $route ][ $method ] );
 
-			$data = (object) [
+			$event = new Event( 'registry/remove-endpoint', (object) [
 				'registry' => $this,
 				'route'    => $route,
 				'method'   => $method,
 				'endpoint' => $endpoint,
-			];
+			] );
 
-			$event = new Event( 'registry/remove-endpoint', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->endpoint;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->endpoint;
 		}
 		return null;
 	}
@@ -103,15 +103,15 @@ class Registry {
 	 */
 	public function hasEndpoint( string $route, string $method = Endpoint::GET ): bool {
 		$value = isset( $this->endpoints[ $route ][ $method ] );
-		$data  = (object) [
+		$event = new Event( 'registry/has-endpoint', (object) [
 			'registry' => $this,
 			'route'    => $route,
 			'method'   => $method,
 			'value'    => $value,
-		];
+		] );
 
-		$event = new Event( 'registry/has-endpoint', $data );
-		return $this->server->dispatcher->dispatch( $event )->data->value;
+		$data = $this->server->dispatcher->dispatch( $event )->data;
+		return $data->value;
 	}
 
 	/**
@@ -125,15 +125,15 @@ class Registry {
 	public function getEndpoint( string $route, string $method = Endpoint::GET ): Endpoint {
 		if ( $this->hasEndpoint( $route, $method ) ) {
 			$endpoint = $this->endpoints[ $route ][ $method ];
-			$data     = (object) [
+			$event    = new Event( 'registry/get-endpoint', (object) [
 				'registry' => $this,
 				'route'    => $route,
 				'method'   => $method,
 				'endpoint' => $endpoint,
-			];
+			] );
 
-			$event = new Event( 'registry/get-endpoint', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->endpoint;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->endpoint;
 		}
 
 		$error = sprintf( 'No endpoint found for %s %s in %s', $method, $route, static::class );
@@ -146,9 +146,13 @@ class Registry {
 	 * @return Endpoint[] An array of registered endpoints.
 	 */
 	public function getEndpoints(): array {
-		$data  = (object) [ 'registry' => $this, 'endpoints' => $this->endpoints ];
-		$event = new Event( 'registry/get-endpoints', $data );
-		return $this->server->dispatcher->dispatch( $event )->data->endpoints;
+		$event = new Event( 'registry/get-endpoints', (object) [
+			'registry'  => $this,
+			'endpoints' => $this->endpoints,
+		] );
+
+		$data = $this->server->dispatcher->dispatch( $event )->data;
+		return $data->endpoints;
 	}
 
 	/* -------------------------------------------------------------------------
@@ -192,14 +196,14 @@ class Registry {
 			$middleware = $this->getMiddleware( $id );
 			unset( $this->middleware[ $id ] );
 
-			$data = (object) [
+			$event = new Event( 'registry/remove-middleware', (object) [
 				'registry'   => $this,
 				'id'         => $id,
 				'middleware' => $middleware,
-			];
+			] );
 
-			$event = new Event( 'registry/remove-middleware', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->middleware;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->middleware;
 		}
 		return null;
 	}
@@ -213,14 +217,14 @@ class Registry {
 	 */
 	public function hasMiddleware( string $id ): bool {
 		$value = isset( $this->middleware[ $id ] );
-		$data  = (object) [
+		$event = new Event( 'registry/has-middleware', (object) [
 			'registry' => $this,
 			'id'       => $id,
 			'value'    => $value,
-		];
+		] );
 
-		$event = new Event( 'registry/has-middleware', $data );
-		return $this->server->dispatcher->dispatch( $event )->data->value;
+		$data = $this->server->dispatcher->dispatch( $event )->data;
+		return $data->value;
 	}
 
 	/**
@@ -233,14 +237,14 @@ class Registry {
 	public function getMiddleware( string $id ): Middleware {
 		if ( $this->hasMiddleware( $id ) ) {
 			$middleware = $this->middleware[ $id ];
-			$data       = (object) [
+			$event      = new Event( 'registry/get-middleware', (object) [
 				'registry'   => $this,
 				'id'         => $id,
 				'middleware' => $middleware,
-			];
+			] );
 
-			$event = new Event( 'registry/get-middleware', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->middleware;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->middleware;
 		}
 
 		$error = sprintf( 'Middleware %s not found in %s', $id, static::class );
@@ -256,9 +260,13 @@ class Registry {
 		$entries = $this->middleware;
 		usort( $entries, [ static::class, 'sortMiddleware' ] );
 
-		$data  = (object) [ 'registry' => $this, 'entries' => $entries ];
-		$event = new Event( 'registry/get-middleware-entries', $data );
-		return $this->server->dispatcher->dispatch( $event )->data->entries;
+		$event = new Event( 'registry/get-middleware-entries', (object) [
+			'registry' => $this,
+			'entries'  => $entries,
+		] );
+
+		$data = $this->server->dispatcher->dispatch( $event )->data;
+		return $data->entries;
 	}
 
 	/**
@@ -322,15 +330,15 @@ class Registry {
 			$listener = $this->getListener( $id, $type );
 			unset( $this->listeners[ $type ][ $id ] );
 
-			$data = (object) [
+			$event = new Event( 'registry/remove-listener', (object) [
 				'registry' => $this,
 				'id'       => $id,
 				'type'     => $type,
 				'listener' => $listener,
-			];
+			] );
 
-			$event = new Event( 'registry/remove-listener', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->listener;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->listener;
 		}
 		return null;
 	}
@@ -345,15 +353,15 @@ class Registry {
 	 */
 	public function hasListener( string $id, string $type ): bool {
 		$value = isset( $this->listeners[ $type ][ $id ] );
-		$data  = (object) [
+		$event = new Event( 'registry/has-listener', (object) [
 			'registry' => $this,
 			'id'       => $id,
 			'type'     => $type,
 			'value'    => $value,
-		];
+		] );
 
-		$event = new Event( 'registry/has-listener', $data );
-		return $this->server->dispatcher->dispatch( $event )->data->value;
+		$data = $this->server->dispatcher->dispatch( $event )->data;
+		return $data->value;
 	}
 
 	/**
@@ -367,15 +375,15 @@ class Registry {
 	public function getListener( string $id, string $type ): Listener {
 		if ( $this->hasListener( $id, $type ) ) {
 			$listener = $this->listeners[ $type ][ $id ];
-			$data     = (object) [
+			$event    = new Event( 'registry/get-listener', (object) [
 				'registry' => $this,
 				'id'       => $id,
 				'type'     => $type,
 				'listener' => $listener,
-			];
+			] );
 
-			$event = new Event( 'registry/get-listener', $data );
-			return $this->server->dispatcher->dispatch( $event )->data->listener;
+			$data = $this->server->dispatcher->dispatch( $event )->data;
+			return $data->listener;
 		}
 
 		$error = sprintf( 'Listener %s not found in %s', $id, static::class );

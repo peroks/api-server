@@ -66,16 +66,23 @@ class Server implements RequestHandlerInterface {
 	 * @return ResponseInterface A PSR-7 response.
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
-		$requestEvent = new Event( 'server/request', (object) [
+		$data = (object) [
 			'server'  => $this,
 			'request' => $request,
-		] );
+		];
 
-		$data           = $this->dispatcher->dispatch( $requestEvent )->data;
+		// Dispatch server request event.
+		$event = new Event( 'server/request', $data );
+		$data  = $this->dispatcher->dispatch( $event )->data;
+
+		// Get the response for the possibly modified request.
 		$data->response = $this->handler->handle( $data->request );
-		$responseEvent  = new Event( 'server/response', $data );
 
-		$data = $this->dispatcher->dispatch( $responseEvent )->data;
+		// Dispatch server response event.
+		$event = new Event( 'server/response', $data );
+		$data  = $this->dispatcher->dispatch( $event )->data;
+
+		// Return the possibly modified server response.
 		return $data->response;
 	}
 }
