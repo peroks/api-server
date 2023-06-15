@@ -21,8 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class ApiServerTest extends TestCase {
 
-	public static function setUpBeforeClass(): void {}
-
 	private Server $server;
 
 	public function setUp(): void {
@@ -30,24 +28,9 @@ final class ApiServerTest extends TestCase {
 	}
 
 	/**
-	 * Data provider for testSearchProductRequest().
-	 *
-	 * @return array[][]
+	 * Check server core instances.
 	 */
-	public static function getTestData(): array {
-		return [
-			'test-data-01' => [],
-			'test-data-02' => [],
-			'test-data-03' => [],
-		];
-	}
-
-	/**
-	 * Check core server instances.
-	 *
-	 * @return void
-	 */
-	public function testCoreInstances(): void {
+	public function testInstances(): void {
 		$this->assertInstanceOf( Server::class, $this->server );
 		$this->assertInstanceOf( Registry::class, $this->server->registry );
 		$this->assertInstanceOf( Handler::class, $this->server->handler );

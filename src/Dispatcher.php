@@ -44,9 +44,9 @@ class Dispatcher implements DispatcherInterface {
 	/**
 	 * Dispatches the given event to all registered event listeners for processing.
 	 *
-	 * @param object $event The event to process.
+	 * @param Event $event The event to process.
 	 *
-	 * @return object The given event, now possibly modified by listeners.
+	 * @return Event The given event, now possibly modified by listeners.
 	 */
 	public function dispatch( object $event ): object {
 		$this->processing[] = $event->type;
