@@ -3,7 +3,7 @@
 ### An ultra-light REST API server based on PSR-7, PSR-14 and PSR-15 best practice standards.
 
 The REST API server is not a stand-alone application, but a host for external
-PSR-15 request handlers and middleware. You can use this class as a module
+PSR-15 server request handlers and middleware. You can use the server as a module
 in your own application or extend it to create custom api servers.
 
 This server does not handle any requests by itself, it just dispatches
@@ -23,11 +23,15 @@ In order to register an API endpoint, you first need to create your own
 [PSR-15 Server Request Handler](https://www.php-fig.org/psr/psr-15/) implementation.
 Use an [Endpoint](src/Endpoint.php) instance to provide the
 endpoint **route** (server path) and **http method** in addition to your
-PSR-15 server request handler. The `id` is forwarded to the `handler` to
-identify the endpoint.
+PSR-15 server request handler.
 
-You'll find an example of a very simple handler implementation here:
-[TestHandler.php](tests/TestHandler.php) 
+The `route` and `action` properties are added to the request as
+reserved request **attributes**: `__route` and `__action`.
+The `handler` can - but don't have to - use these attributes to map server requests
+to functions.
+
+You'll find an example of a very simple request handler implementation here:
+[TestHandler.php](tests/TestHandler.php)
 
     use Peroks\ApiServer\Server;
     use Peroks\ApiServer\Endpoint;
@@ -36,9 +40,9 @@ You'll find an example of a very simple handler implementation here:
     $handler = new YourRequestHandler();
 
     $server->registry->addEndpoint( new Endpoint( [
-        'id'      => 'echo',            // Endpoint id
         'route'   => '/test',           // Endpoint route
         'method'  => Endpoint::POST,    // Endpoint method
+        'action'  => 'echo',            // Endpoint action
         'handler' => $handler,          // PSR-15 server request handler
     ] ) );
 

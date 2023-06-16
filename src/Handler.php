@@ -84,9 +84,9 @@ class Handler implements RequestHandlerInterface {
 					throw new ServerException( $error, 405 );
 				}
 
-				$attributes           = array_filter( $matches, 'is_string', ARRAY_FILTER_USE_KEY );
-				$attributes['_id']    = $endpoint->id();
-				$attributes['_route'] = $endpoint->route;
+				$attributes             = array_filter( $matches, 'is_string', ARRAY_FILTER_USE_KEY );
+				$attributes['__route']  = $endpoint->route;
+				$attributes['__action'] = $endpoint->action;
 
 				return $endpoint;
 			}

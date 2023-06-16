@@ -47,17 +47,17 @@ final class ApiServerTest extends TestCase {
 
 		// Create an endpoint for saying "Hallo World".
 		$hello = new Endpoint( [
-			'id'      => 'hello',
 			'route'   => '/test',
 			'method'  => Endpoint::GET,
+			'action'  => 'hello',
 			'handler' => $handler,
 		] );
 
 		// Create an endpoint for echoing a greeting.
 		$echo = new Endpoint( [
-			'id'      => 'echo',
 			'route'   => '/test',
 			'method'  => Endpoint::POST,
+			'action'  => 'echo',
 			'handler' => $handler,
 		] );
 
@@ -117,9 +117,9 @@ final class ApiServerTest extends TestCase {
 
 		// Register an endpoint.
 		$this->server->registry->addEndpoint( new Endpoint( [
-			'id'      => 'echo',
 			'route'   => '/test',
 			'method'  => Endpoint::POST,
+			'action'  => 'echo',
 			'handler' => new TestHandler(),
 		] ) );
 
@@ -183,9 +183,9 @@ final class ApiServerTest extends TestCase {
 
 		// Register an endpoint.
 		$this->server->registry->addEndpoint( new Endpoint( [
-			'id'      => 'echo',
 			'route'   => '/test',
 			'method'  => Endpoint::POST,
+			'action'  => 'echo',
 			'handler' => new TestHandler(),
 		] ) );
 

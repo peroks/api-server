@@ -7,11 +7,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * A server request endpoint.
  *
- * @property string $id The endpoint id, must be unique for each handler.
  * @property string $name The endpoint name.
  * @property string $desc The endpoint description.
  * @property string $route The endpoint route.
  * @property string $method The endpoint method.
+ * @property string $action The endpoint action, can reflect handler function names.
  * @property RequestHandlerInterface $handler A PSR-15 request handler.
  *
  * @author Per Egil Roksvaag
@@ -32,21 +32,9 @@ class Endpoint extends Model {
 	const TRACE   = 'TRACE';
 
 	/**
-	 * @var string The model's id property.
-	 */
-	protected static string $idProperty = 'id';
-
-	/**
 	 * @var array An array of model properties.
 	 */
 	protected static array $properties = [
-		'id'      => [
-			'id'       => 'id',
-			'name'     => 'Endpoint id',
-			'desc'     => 'The endpoint id, must be unique for each handler',
-			'type'     => PropertyType::STRING,
-			'required' => true,
-		],
 		'name'    => [
 			'id'       => 'name',
 			'name'     => 'Endpoint name',
@@ -86,6 +74,13 @@ class Endpoint extends Model {
 				self::OPTIONS,
 				self::TRACE,
 			],
+		],
+		'action'  => [
+			'id'       => 'action',
+			'name'     => 'Endpoint action',
+			'desc'     => 'The endpoint action',
+			'type'     => PropertyType::STRING,
+			'required' => false,
 		],
 		'handler' => [
 			'id'       => 'handler',

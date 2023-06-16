@@ -22,8 +22,8 @@ class TestHandler implements RequestHandlerInterface {
 	 * @return ResponseInterface A PSR-7 response.
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
-		$id = $request->getAttribute( '_id' );
-		return call_user_func( [ $this, $id ], $request );
+		$action = $request->getAttribute( '__action' );
+		return call_user_func( [ $this, $action ], $request );
 	}
 
 	/**
