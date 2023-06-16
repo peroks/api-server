@@ -207,7 +207,7 @@ final class ApiServerTest extends TestCase {
 		] );
 
 		// Since the event listener is not yet registered, it should not be found.
-		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$result = $this->server->registry->hasListener( $listener->id );
 		$this->assertFalse( $result );
 
 		// The middleware returns 403 Forbidden for all unauthorized requests.
@@ -224,11 +224,11 @@ final class ApiServerTest extends TestCase {
 		$this->assertFalse( $result );
 
 		// Check that the event listener is registered.
-		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$result = $this->server->registry->hasListener( $listener->id );
 		$this->assertTrue( $result );
 
 		// Check that the correct event listener is returned.
-		$result = $this->server->registry->getListener( $listener->id, $listener->type );
+		$result = $this->server->registry->getListener( $listener->id );
 		$this->assertEquals( $listener, $result );
 
 		// Check that one event listener is registered for the "handle" event.
@@ -237,7 +237,7 @@ final class ApiServerTest extends TestCase {
 		$this->assertEquals( $listener, $result[0] );
 
 		// Check that the event listener are registered.
-		$result = current( $this->server->registry->getListeners() );
+		$result = $this->server->registry->getListeners();
 		$this->assertCount( 1, $result );
 		$this->assertEquals( $listener, current( $result ) );
 
@@ -247,15 +247,15 @@ final class ApiServerTest extends TestCase {
 		$this->assertEquals( 'Hello World', $response->getBody() );
 
 		// Remove the event listener and check the result.
-		$result = $this->server->registry->removeListener( $listener->id, $listener->type );
+		$result = $this->server->registry->removeListener( $listener->id );
 		$this->assertEquals( $listener, $result );
 
 		// Check that the event listener was removed.
-		$result = $this->server->registry->hasListener( $listener->id, $listener->type );
+		$result = $this->server->registry->hasListener( $listener->id );
 		$this->assertFalse( $result );
 
 		// Check that getting an unregistered event listener is throwing an exception.
 		$this->expectException( ServerException::class );
-		$this->server->registry->getEndpoint( $listener->id, $listener->type );
+		$this->server->registry->getListener( $listener->id );
 	}
 }

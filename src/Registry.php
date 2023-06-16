@@ -20,9 +20,14 @@ class Registry {
 	protected array $middleware = [];
 
 	/**
-	 * @var Listener[][] An array of registered PSR-14 event listeners.
+	 * @var Listener[] An array of registered PSR-14 event listeners.
 	 */
 	protected array $listeners = [];
+
+	/**
+	 * @var array Cached registry objects.
+	 */
+	protected array $cache = [];
 
 	/**
 	 * @var Server The Api Server.
@@ -181,7 +186,7 @@ class Registry {
 		$middleware = $this->server->dispatcher->dispatch( $event )->data->middleware;
 
 		$this->middleware[ $middleware->id ] = $middleware;
-		return true;
+		return uasort( $this->middleware, [ $this, 'sortMiddleware' ] );
 	}
 
 	/**
@@ -257,12 +262,9 @@ class Registry {
 	 * @return Middleware[] An array of registered middleware entries.
 	 */
 	public function getMiddlewareEntries(): array {
-		$entries = $this->middleware;
-		usort( $entries, [ static::class, 'sortMiddleware' ] );
-
 		$event = new Event( 'registry/get-middleware-entries', (object) [
 			'registry' => $this,
-			'entries'  => $entries,
+			'entries'  => array_values( $this->middleware ),
 		] );
 
 		$data = $this->server->dispatcher->dispatch( $event )->data;
@@ -277,6 +279,27 @@ class Registry {
 	 */
 	protected static function sortMiddleware( Middleware $a, Middleware $b ): int {
 		return $a->priority <=> $b->priority;
+	}
+
+	/**
+	 * Builds an array of listeners indexed by type and sorted by priority.
+	 *
+	 * @return Listener[][]
+	 */
+	protected function buildMiddleware(): array {
+		$result = [];
+
+		foreach ( $this->middleware as $middleware ) {
+			$result[ $listener->type ][] = $listener;
+		}
+
+		foreach ( $result as &$entries ) {
+			usort( $entries, function( Listener $a, Listener $b ): int {
+				return $a->priority <=> $b->priority;
+			} );
+		}
+
+		return $result;
 	}
 
 	/* -------------------------------------------------------------------------
@@ -305,7 +328,7 @@ class Registry {
 	public function addListener( Listener $listener ): bool {
 		$listener->validate( true );
 
-		if ( $this->hasListener( $listener->id, $listener->type ) ) {
+		if ( $this->hasListener( $listener->id ) ) {
 			return false;
 		}
 
@@ -313,7 +336,8 @@ class Registry {
 		$event    = new Event( 'registry/add-listener', $data );
 		$listener = $this->server->dispatcher->dispatch( $event )->data->listener;
 
-		$this->listeners[ $listener->type ][ $listener->id ] = $listener;
+		$this->listeners[ $listener->id ] = $listener;
+		unset( $this->cache['listeners'] );
 		return true;
 	}
 
@@ -321,19 +345,18 @@ class Registry {
 	 * Removes an event listener from the registry.
 	 *
 	 * @param string $id The event listener id.
-	 * @param string $type The event type.
 	 *
 	 * @return Listener|null The event listener removed from the registry or null.
 	 */
-	public function removeListener( string $id, string $type ): Listener | null {
-		if ( $this->hasListener( $id, $type ) ) {
-			$listener = $this->getListener( $id, $type );
-			unset( $this->listeners[ $type ][ $id ] );
+	public function removeListener( string $id ): Listener | null {
+		if ( $this->hasListener( $id ) ) {
+			$listener = $this->getListener( $id );
+			unset( $this->listeners[ $listener->id ] );
+			unset( $this->cache['listeners'] );
 
 			$event = new Event( 'registry/remove-listener', (object) [
 				'registry' => $this,
 				'id'       => $id,
-				'type'     => $type,
 				'listener' => $listener,
 			] );
 
@@ -347,16 +370,14 @@ class Registry {
 	 * Checks if an event listener is registered.
 	 *
 	 * @param string $id The event listener id.
-	 * @param string $type The event type.
 	 *
 	 * @return bool True if a matching event listener is registered, null otherwise.
 	 */
-	public function hasListener( string $id, string $type ): bool {
-		$value = isset( $this->listeners[ $type ][ $id ] );
+	public function hasListener( string $id ): bool {
+		$value = isset( $this->listeners[ $id ] );
 		$event = new Event( 'registry/has-listener', (object) [
 			'registry' => $this,
 			'id'       => $id,
-			'type'     => $type,
 			'value'    => $value,
 		] );
 
@@ -368,17 +389,15 @@ class Registry {
 	 * Gets a registered event listener.
 	 *
 	 * @param string $id The event listener id.
-	 * @param string $type The event type.
 	 *
 	 * @return Listener The matching event listener in the registry.
 	 */
-	public function getListener( string $id, string $type ): Listener {
-		if ( $this->hasListener( $id, $type ) ) {
-			$listener = $this->listeners[ $type ][ $id ];
+	public function getListener( string $id ): Listener {
+		if ( $this->hasListener( $id ) ) {
+			$listener = $this->listeners[ $id ];
 			$event    = new Event( 'registry/get-listener', (object) [
 				'registry' => $this,
 				'id'       => $id,
-				'type'     => $type,
 				'listener' => $listener,
 			] );
 
@@ -398,9 +417,10 @@ class Registry {
 	 * @return Listener[] An array of registered listeners.
 	 */
 	public function getTypeListeners( string $type ): array {
-		$listeners = $this->listeners[ $type ] ?? [];
-		usort( $listeners, [ static::class, 'sortListener' ] );
-		return $listeners;
+		if ( $this->listeners && empty( $this->cache['listeners'] ) ) {
+			$this->cache['listeners'] = $this->buildListeners();
+		}
+		return $this->cache['listeners'][ $type ] ?? [];
 	}
 
 	/**
@@ -409,21 +429,27 @@ class Registry {
 	 * @return Listener[][] An array containing registered listener.
 	 */
 	public function getListeners(): array {
-		$allListeners = $this->listeners;
-
-		foreach ( $allListeners as &$listeners ) {
-			usort( $listeners, [ static::class, 'sortListener' ] );
-		}
-		return $allListeners;
+		return $this->listeners;
 	}
 
 	/**
-	 * Sorts listener by priority.
+	 * Builds an array of listeners indexed by type and sorted by priority.
 	 *
-	 * @param Listener $a An event listener to sort.
-	 * @param Listener $b Another event listener to sort.
+	 * @return Listener[][]
 	 */
-	protected static function sortListener( Listener $a, Listener $b ): int {
-		return $a->priority <=> $b->priority;
+	protected function buildListeners(): array {
+		$result = [];
+
+		foreach ( $this->listeners as $listener ) {
+			$result[ $listener->type ][] = $listener;
+		}
+
+		foreach ( $result as &$entries ) {
+			usort( $entries, function( Listener $a, Listener $b ): int {
+				return $a->priority <=> $b->priority;
+			} );
+		}
+
+		return $result;
 	}
 }
