@@ -281,27 +281,6 @@ class Registry {
 		return $a->priority <=> $b->priority;
 	}
 
-	/**
-	 * Builds an array of listeners indexed by type and sorted by priority.
-	 *
-	 * @return Listener[][]
-	 */
-	protected function buildMiddleware(): array {
-		$result = [];
-
-		foreach ( $this->middleware as $middleware ) {
-			$result[ $listener->type ][] = $listener;
-		}
-
-		foreach ( $result as &$entries ) {
-			usort( $entries, function( Listener $a, Listener $b ): int {
-				return $a->priority <=> $b->priority;
-			} );
-		}
-
-		return $result;
-	}
-
 	/* -------------------------------------------------------------------------
 	 * Event listeners
 	 * -----------------------------------------------------------------------*/
@@ -351,7 +330,7 @@ class Registry {
 	public function removeListener( string $id ): Listener | null {
 		if ( $this->hasListener( $id ) ) {
 			$listener = $this->getListener( $id );
-			unset( $this->listeners[ $listener->id ] );
+			unset( $this->listeners[ $id ] );
 			unset( $this->cache['listeners'] );
 
 			$event = new Event( 'registry/remove-listener', (object) [
