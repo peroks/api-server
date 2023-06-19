@@ -37,9 +37,9 @@ In order to register an API endpoint, you first need to create your own
 You'll find an example of a very simple implementation for testing purposes
 here: [TestHandler.php](tests/TestHandler.php).
 
-Use an [Endpoint](src/Endpoint.php) instance to provide the
+Use an [Endpoint](src/Endpoint.php) wrapper to set the
 endpoint **route** (server path) and **http method** in addition to your
-PSR-15 server request handler.
+PSR-15 server request **handler**.
 
 The `route` and `action` properties are added to the request as
 reserved request **attributes**: `__route` and `__action`.
