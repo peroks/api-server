@@ -30,7 +30,7 @@ class Server implements RequestHandlerInterface {
 	const VERSION = '0.5.0';
 
 	/**
-	 * @var Registry A container for registered request handlers, middleware and event listeners.
+	 * @var Registry A container for registered endpoints, middleware and event listeners.
 	 */
 	public readonly Registry $registry;
 
