@@ -46,14 +46,14 @@ class Handler implements RequestHandlerInterface {
 		];
 
 		// Dispatch handler request event.
-		$event = new Event( 'handler/request', $data );
+		$event = new Event( 'server/request', $data );
 		$data  = $this->server->dispatcher->dispatch( $event )->data;
 
 		// Get the response for the possibly modified request.
 		$data->response = $data->stack->handle( $data->request );
 
 		// Dispatch handler response event.
-		$event = new Event( 'handler/response', $data );
+		$event = new Event( 'server/response', $data );
 		$data  = $this->server->dispatcher->dispatch( $event )->data;
 
 		// Return the possibly modified server response.
