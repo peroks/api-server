@@ -1,4 +1,4 @@
-<?php namespace Peroks\ApiServer;
+<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
 
 /**
  * A container for registered request handlers and middleware.

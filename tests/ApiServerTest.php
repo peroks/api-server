@@ -1,4 +1,4 @@
-<?php namespace Peroks\ApiServer\Tests;
+<?php declare( strict_types = 1 ); namespace Peroks\ApiServer\Tests;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Peroks\ApiServer\Dispatcher;

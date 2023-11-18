@@ -1,4 +1,4 @@
-<?php namespace Peroks\ApiServer;
+<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
