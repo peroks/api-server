@@ -34,7 +34,7 @@ class Event implements StoppableEventInterface {
 	 */
 	public function __construct( string $type, mixed $data = null ) {
 		$this->type = $type;
-		$this->data = $data ?? (object) [];
+		$this->data = $data;
 	}
 
 	/**

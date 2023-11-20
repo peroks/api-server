@@ -31,7 +31,7 @@ class Dispatcher implements DispatcherInterface {
 	}
 
 	/**
-	 * @param object $event An event for which to return the relevant listeners.
+	 * @param object<Event> $event An event for which to return the relevant listeners.
 	 *
 	 * @return iterable[callable] An iterable of callable event listeners.
 	 */
@@ -44,9 +44,9 @@ class Dispatcher implements DispatcherInterface {
 	/**
 	 * Dispatches the given event to all registered event listeners for processing.
 	 *
-	 * @param Event $event The event to process.
+	 * @param object<Event> $event The event to process.
 	 *
-	 * @return Event The given event, now possibly modified by listeners.
+	 * @return object<Event> The given event, now possibly modified by listeners.
 	 */
 	public function dispatch( object $event ): object {
 		$this->processing[] = $event->type;
