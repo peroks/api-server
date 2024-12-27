@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * Processes a middleware stack.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -7,10 +17,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Processes a middleware stack.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class Stack implements RequestHandlerInterface {
 
@@ -22,7 +28,7 @@ class Stack implements RequestHandlerInterface {
 	/**
 	 * @var MiddlewareInterface|RequestHandlerInterface $next The next middleware in the stack.
 	 */
-	protected MiddlewareInterface | RequestHandlerInterface $next;
+	protected MiddlewareInterface|RequestHandlerInterface $next;
 
 	/**
 	 * Constructor.
@@ -54,6 +60,7 @@ class Stack implements RequestHandlerInterface {
 	 * @param ServerRequestInterface $request A PSR-7 server request.
 	 *
 	 * @return ResponseInterface A PSR-7 response.
+	 * @throws ServerException
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
 

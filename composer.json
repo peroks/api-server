@@ -1,10 +1,9 @@
 {
 	"name": "peroks/api-server",
 	"description": "An ultra-light api server based on PSR-7, PSR-14 and PSR-15 best-practice standards.",
-	"type": "library",
-	"minimum-stability": "stable",
-	"version": "0.5.0",
 	"license": "MIT",
+	"type": "library",
+	"version": "0.6.0",
 	"keywords": [
 		"PSR-7",
 		"PSR-14",
@@ -22,6 +21,24 @@
 			"homepage": "https://github.com/peroks"
 		}
 	],
+	"require": {
+		"php": ">=8.1",
+		"peroks/model": "^3.0",
+		"psr/event-dispatcher": "^1.0",
+		"psr/http-server-handler": "^1.0",
+		"psr/http-server-middleware": "^1.0"
+	},
+	"require-dev": {
+		"ergebnis/composer-normalize": "^2.45.0",
+		"guzzlehttp/psr7": "^2.5",
+		"phpunit/phpunit": "^10.5",
+		"wp-coding-standards/wpcs": "^3.1.0"
+	},
+	"provide": {
+		"psr/http-server-handler-implementation": "1.0",
+		"psr/http-server-middleware-implementation": "1.0"
+	},
+	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
 			"Peroks\\ApiServer\\": "src/"
@@ -32,22 +49,25 @@
 			"Peroks\\ApiServer\\Tests\\": "tests/"
 		}
 	},
-	"require": {
-		"peroks/model": "^1.0",
-		"php": "^8.1",
-		"psr/http-server-middleware": "^1.0",
-		"psr/http-server-handler": "^1.0",
-		"psr/event-dispatcher": "^1.0"
-	},
-	"require-dev": {
-		"guzzlehttp/psr7": "^2.5",
-		"phpunit/phpunit": "^10"
-	},
-	"provide": {
-		"psr/http-server-handler-implementation": "1.0",
-		"psr/http-server-middleware-implementation": "1.0"
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"ergebnis/composer-normalize": true
+		},
+		"platform": {
+			"php": "8.1"
+		}
 	},
 	"scripts": {
+		"build-deploy": "@composer install --no-dev",
+		"build-install": "@composer install",
+		"build-lock": "@composer update --with-all-dependencies --no-install",
+		"build-normalize": "@composer normalize",
+		"build-update": "@composer update --with-all-dependencies",
+		"clean": "rm -rf ./vendor",
+		"format": "./vendor/bin/phpcbf ./src ./tests",
+		"lint": "./vendor/bin/phpcs ./src ./tests",
+		"outdated-check": "@composer outdated",
 		"tests": "./vendor/bin/phpunit tests"
 	}
 }

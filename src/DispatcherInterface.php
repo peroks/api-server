@@ -1,14 +1,20 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
-
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
-
+<?php
 /**
  * A PSR-14 listener provider and event dispatcher.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
+
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
+
+/**
+ * A PSR-14 listener provider and event dispatcher.
  */
 interface DispatcherInterface extends EventDispatcherInterface, ListenerProviderInterface {
 
@@ -21,4 +27,3 @@ interface DispatcherInterface extends EventDispatcherInterface, ListenerProvider
 	 */
 	public function isProcessing( string $type ): bool;
 }
-

@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * An event listener entry.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Peroks\Model\Model;
 use Peroks\Model\PropertyType;
@@ -12,10 +22,6 @@ use Peroks\Model\PropertyType;
  * @property string $type The listener type.
  * @property string $priority The listener priority.
  * @property string $callback The listener callback.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class Listener extends Model {
 

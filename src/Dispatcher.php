@@ -1,13 +1,19 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
-
-use Psr\EventDispatcher\StoppableEventInterface;
-
+<?php
 /**
  * A PSR-14 listener provider and event dispatcher.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
+
+use Psr\EventDispatcher\StoppableEventInterface;
+
+/**
+ * A PSR-14 listener provider and event dispatcher.
  */
 class Dispatcher implements DispatcherInterface {
 

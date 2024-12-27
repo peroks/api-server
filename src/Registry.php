@@ -1,11 +1,19 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
-
+<?php
 /**
  * A container for registered request handlers and middleware.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
+
+use Peroks\Model\ModelException;
+
+/**
+ * A container for registered request handlers and middleware.
  */
 class Registry {
 
@@ -56,6 +64,7 @@ class Registry {
 	 * @param Endpoint $endpoint The endpoint to add to the registry.
 	 *
 	 * @return bool True if the endpoint was added, false otherwise.
+	 * @throws ModelException
 	 */
 	public function addEndpoint( Endpoint $endpoint ): bool {
 		$endpoint->validate( true );
@@ -64,7 +73,10 @@ class Registry {
 			return false;
 		}
 
-		$data     = (object) [ 'registry' => $this, 'endpoint' => $endpoint ];
+		$data     = (object) [
+			'registry' => $this,
+			'endpoint' => $endpoint,
+		];
 		$event    = new Event( 'registry/add-endpoint', $data );
 		$endpoint = $this->server->dispatcher->dispatch( $event )->data->endpoint;
 
@@ -79,8 +91,9 @@ class Registry {
 	 * @param string $method The endpoint method.
 	 *
 	 * @return Endpoint|null The endpoint removed from the registry or null.
+	 * @throws ServerException
 	 */
-	public function removeEndpoint( string $route, string $method = Endpoint::GET ): Endpoint | null {
+	public function removeEndpoint( string $route, string $method = Endpoint::GET ): Endpoint|null {
 		if ( $this->hasEndpoint( $route, $method ) ) {
 			$endpoint = $this->getEndpoint( $route, $method );
 			unset( $this->endpoints[ $route ][ $method ] );
@@ -126,6 +139,7 @@ class Registry {
 	 * @param string $method The endpoint method.
 	 *
 	 * @return Endpoint The matching endpoint in the registry.
+	 * @throws ServerException
 	 */
 	public function getEndpoint( string $route, string $method = Endpoint::GET ): Endpoint {
 		if ( $this->hasEndpoint( $route, $method ) ) {
@@ -173,6 +187,7 @@ class Registry {
 	 * @param Middleware $middleware The middleware entry to add to the registry.
 	 *
 	 * @return bool True if the middleware was added, false otherwise.
+	 * @throws ModelException
 	 */
 	public function addMiddleware( Middleware $middleware ): bool {
 		$middleware->validate( true );
@@ -181,7 +196,10 @@ class Registry {
 			return false;
 		}
 
-		$data       = (object) [ 'registry' => $this, 'middleware' => $middleware ];
+		$data       = (object) [
+			'registry'   => $this,
+			'middleware' => $middleware,
+		];
 		$event      = new Event( 'registry/add-middleware', $data );
 		$middleware = $this->server->dispatcher->dispatch( $event )->data->middleware;
 
@@ -195,8 +213,9 @@ class Registry {
 	 * @param string $id The middleware id.
 	 *
 	 * @return Middleware|null The middleware removed from the registry or null.
+	 * @throws ServerException
 	 */
-	public function removeMiddleware( string $id ): Middleware | null {
+	public function removeMiddleware( string $id ): Middleware|null {
 		if ( $this->hasMiddleware( $id ) ) {
 			$middleware = $this->getMiddleware( $id );
 			unset( $this->middleware[ $id ] );
@@ -238,6 +257,7 @@ class Registry {
 	 * @param string $id The middleware id.
 	 *
 	 * @return Middleware The matching middleware in the registry.
+	 * @throws ServerException
 	 */
 	public function getMiddleware( string $id ): Middleware {
 		if ( $this->hasMiddleware( $id ) ) {
@@ -303,6 +323,7 @@ class Registry {
 	 * @param Listener $listener The event listener to add to the registry.
 	 *
 	 * @return bool True if the event listener was added, false otherwise.
+	 * @throws ModelException
 	 */
 	public function addListener( Listener $listener ): bool {
 		$listener->validate( true );
@@ -311,7 +332,10 @@ class Registry {
 			return false;
 		}
 
-		$data     = (object) [ 'registry' => $this, 'listener' => $listener ];
+		$data     = (object) [
+			'registry' => $this,
+			'listener' => $listener,
+		];
 		$event    = new Event( 'registry/add-listener', $data );
 		$listener = $this->server->dispatcher->dispatch( $event )->data->listener;
 
@@ -326,8 +350,9 @@ class Registry {
 	 * @param string $id The event listener id.
 	 *
 	 * @return Listener|null The event listener removed from the registry or null.
+	 * @throws ServerException
 	 */
-	public function removeListener( string $id ): Listener | null {
+	public function removeListener( string $id ): Listener|null {
 		if ( $this->hasListener( $id ) ) {
 			$listener = $this->getListener( $id );
 			unset( $this->listeners[ $id ] );
@@ -370,6 +395,7 @@ class Registry {
 	 * @param string $id The event listener id.
 	 *
 	 * @return Listener The matching event listener in the registry.
+	 * @throws ServerException
 	 */
 	public function getListener( string $id ): Listener {
 		if ( $this->hasListener( $id ) ) {
@@ -424,7 +450,7 @@ class Registry {
 		}
 
 		foreach ( $result as &$entries ) {
-			usort( $entries, function( Listener $a, Listener $b ): int {
+			usort( $entries, function ( Listener $a, Listener $b ): int {
 				return $a->priority <=> $b->priority;
 			} );
 		}

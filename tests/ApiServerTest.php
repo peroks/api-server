@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer\Tests;
+<?php
+/**
+ * Api Server test case.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer\Tests;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Peroks\ApiServer\Dispatcher;
@@ -10,19 +20,22 @@ use Peroks\ApiServer\Middleware;
 use Peroks\ApiServer\Registry;
 use Peroks\ApiServer\Server;
 use Peroks\ApiServer\ServerException;
+use Peroks\Model\Utils;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Api Server test case.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT
  */
 final class ApiServerTest extends TestCase {
 
+	/**
+	 * @var Server The API server instance.
+	 */
 	private Server $server;
 
+	/**
+	 * Test setup.
+	 */
 	public function setUp(): void {
 		$this->server = new Server();
 	}
@@ -179,6 +192,11 @@ final class ApiServerTest extends TestCase {
 		$this->server->registry->getMiddleware( $entry->id );
 	}
 
+	/**
+	 * Dispatcher tests.
+	 *
+	 * @throws ServerException
+	 */
 	public function testDispatcher(): void {
 
 		// Register an endpoint.
@@ -201,7 +219,7 @@ final class ApiServerTest extends TestCase {
 		$listener = new Listener( [
 			'id'       => 'test',
 			'type'     => 'handler/request',
-			'callback' => function( Event $event ) {
+			'callback' => function ( Event $event ) {
 				$event->data->request = $event->data->request->withHeader( 'authorization', 'yes' );
 			},
 		] );
@@ -244,7 +262,7 @@ final class ApiServerTest extends TestCase {
 		// Now the request is authorized by the event listener.
 		$request  = new ServerRequest( 'POST', '/test', [], 'Hello World' );
 		$response = $this->server->handle( $request );
-		$this->assertEquals( 'Hello World', $response->getBody() );
+		$this->assertEquals( 'Hello World', (string) $response->getBody() );
 
 		// Remove the event listener and check the result.
 		$result = $this->server->registry->removeListener( $listener->id );

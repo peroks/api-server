@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * This class dispatches requests to registered middleware and request handlers.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -6,10 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * This class dispatches requests to registered middleware and request handlers.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class Handler implements RequestHandlerInterface {
 
@@ -33,6 +39,7 @@ class Handler implements RequestHandlerInterface {
 	 * @param ServerRequestInterface $request A PSR-7 server request.
 	 *
 	 * @return ResponseInterface A PSR-7 response.
+	 * @throws ServerException
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
 		$endpoint = $this->getEndpoint( $request, $attributes );

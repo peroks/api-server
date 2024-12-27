@@ -1,9 +1,4 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
-
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-
+<?php
 /**
  * The api server main class.
  *
@@ -21,6 +16,17 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+/**
+ * The api server main class.
  */
 class Server implements RequestHandlerInterface {
 
@@ -64,6 +70,7 @@ class Server implements RequestHandlerInterface {
 	 * @param ServerRequestInterface $request A PSR-7 server request.
 	 *
 	 * @return ResponseInterface A PSR-7 response.
+	 * @throws ServerException
 	 */
 	public function handle( ServerRequestInterface $request ): ResponseInterface {
 		return $this->handler->handle( $request );

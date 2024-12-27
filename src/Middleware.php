@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * A PSR-15 middleware entry.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Peroks\Model\Model;
 use Peroks\Model\PropertyType;
@@ -12,10 +22,6 @@ use Psr\Http\Server\MiddlewareInterface;
  * @property string $desc The middleware description.
  * @property integer $priority The middleware priority.
  * @property MiddlewareInterface $instance A PSR-15 middleware instance.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class Middleware extends Model {
 

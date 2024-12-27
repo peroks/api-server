@@ -1,12 +1,18 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * The api server exception.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Exception;
 
 /**
- * The model exception.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
+ * The api server exception.
  */
 class ServerException extends Exception {
 }

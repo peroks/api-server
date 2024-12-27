@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer\Tests;
+<?php
+/**
+ *  PSR-15 Server Request Handler implementation for testing purposes.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer\Tests;
 
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -7,10 +17,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  *  PSR-15 Server Request Handler implementation for testing purposes.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class TestHandler implements RequestHandlerInterface {
 

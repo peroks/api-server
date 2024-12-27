@@ -1,13 +1,19 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
-
-use Psr\EventDispatcher\StoppableEventInterface;
-
+<?php
 /**
  * A PSR-14 stoppable event.
  *
  * @author Per Egil Roksvaag
  * @copyright Per Egil Roksvaag
  * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
+
+use Psr\EventDispatcher\StoppableEventInterface;
+
+/**
+ * A PSR-14 stoppable event.
  */
 class Event implements StoppableEventInterface {
 

@@ -1,4 +1,14 @@
-<?php declare( strict_types = 1 ); namespace Peroks\ApiServer;
+<?php
+/**
+ * A server request endpoint.
+ *
+ * @author Per Egil Roksvaag
+ * @copyright Per Egil Roksvaag
+ * @license MIT License
+ */
+
+declare( strict_types = 1 );
+namespace Peroks\ApiServer;
 
 use Peroks\Model\Model;
 use Peroks\Model\PropertyType;
@@ -13,10 +23,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @property string $method The endpoint method.
  * @property string $action The endpoint action, can reflect handler function names.
  * @property RequestHandlerInterface $handler A PSR-15 request handler.
- *
- * @author Per Egil Roksvaag
- * @copyright Per Egil Roksvaag
- * @license MIT License
  */
 class Endpoint extends Model {
 
